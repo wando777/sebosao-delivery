@@ -10,8 +10,8 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import br.com.cwi.reset.tcc.dominio.Usuario;
-import br.com.cwi.reset.tcc.exceptions.mesmoEmailException;
-import br.com.cwi.reset.tcc.exceptions.objetoNuloException;
+import br.com.cwi.reset.tcc.exceptions.EntidadeJaCadastradaException;
+import br.com.cwi.reset.tcc.exceptions.ObjetoNuloException;
 import br.com.cwi.reset.tcc.repositories.UsuarioRepository;
 
 @Service
@@ -29,10 +29,10 @@ public class UsuarioService {
 
 	private void validaUsuario(Usuario user) {
 		if (usuarioRepository.existsByEmail(user.getEmail())) {
-			throw new mesmoEmailException("Esse e-mail " + user.getEmail() + " já foi cadastrado.");
+			throw new EntidadeJaCadastradaException("Esse e-mail " + user.getEmail() + " já foi cadastrado.");
 		}
 		if (usuarioRepository.existsByCpf(user.getCpf())) {
-			throw new mesmoEmailException("Esse CPF " + user.getCpf() + " já foi cadastrado.");
+			throw new EntidadeJaCadastradaException("Esse CPF " + user.getCpf() + " já foi cadastrado.");
 		}
 	}
 
@@ -44,14 +44,14 @@ public class UsuarioService {
 	public Usuario buscarUsuarioPorId(Long id) {
 		Optional<Usuario> user = usuarioRepository.findById(id);
 		if (user.isEmpty()) {
-			throw new objetoNuloException("O usuário não existe");
+			throw new ObjetoNuloException("O usuário não existe");
 		}
 		return user.get();
 	}
 
 	public Usuario atualizar(Long id, Usuario usuario) {
 		if (usuarioRepository.existsByEmail(usuario.getEmail())) {
-			throw new mesmoEmailException("Esse e-mail " + usuario.getEmail() + " já foi cadastrado.");
+			throw new EntidadeJaCadastradaException("Esse e-mail " + usuario.getEmail() + " já foi cadastrado.");
 		}
 		Usuario usuarioNovo = buscarUsuarioPorId(id);
 		BeanUtils.copyProperties(usuario, usuarioNovo, "id", "cpf");

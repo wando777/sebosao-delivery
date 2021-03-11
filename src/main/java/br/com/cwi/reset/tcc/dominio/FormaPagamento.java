@@ -8,7 +8,8 @@ public enum FormaPagamento {
     PIX("Pix"),
     DINHEIRO("Dinheiro");
 
-    private String descricao;
+    @SuppressWarnings("unused")
+	private String descricao;
 
     FormaPagamento(String descricao) {
         this.descricao = descricao;

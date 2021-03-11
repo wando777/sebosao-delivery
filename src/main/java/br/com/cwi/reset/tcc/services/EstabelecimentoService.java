@@ -1,0 +1,49 @@
+package br.com.cwi.reset.tcc.services;
+
+import javax.validation.Valid;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import br.com.cwi.reset.tcc.dominio.Estabelecimento;
+import br.com.cwi.reset.tcc.dominio.HorarioFuncionamento;
+import br.com.cwi.reset.tcc.exceptions.EntidadeJaCadastradaException;
+import br.com.cwi.reset.tcc.exceptions.ObjetoNuloException;
+import br.com.cwi.reset.tcc.repositories.EstabelecimentoRepository;
+
+@Service
+public class EstabelecimentoService {
+
+	@Autowired
+	private EstabelecimentoRepository estabelecimentoRepository;
+
+	public Estabelecimento cadastrar(@Valid Estabelecimento estabelecimento) {
+		estabelecimento.setId(null);
+		validaEstabelecimento(estabelecimento);
+		return estabelecimentoRepository.save(estabelecimento);
+	}
+
+	private void validaEstabelecimento(Estabelecimento estabelecimento) {
+		if (estabelecimentoRepository.existsByCnpj(estabelecimento.getCnpj())) {
+			throw new EntidadeJaCadastradaException("Esse CNPJ " + estabelecimento.getCnpj() + " já foi cadastrado.");
+		}
+		estabelecimento.getHorariosFuncionamento().forEach(horario -> {
+			if (isVazio(horario)) {
+				throw new ObjetoNuloException("É preciso definir um horário de funcionamento");
+			};
+		});
+
+	}
+
+	private boolean isVazio(HorarioFuncionamento horario) {
+		boolean retorno = false;
+		if (horario.getHorarioAbertura() == null) {
+			retorno = true;
+		}
+		if (horario.getHorarioFechamento() == null) {
+			retorno = true;
+		}
+		return retorno;
+	}
+
+}

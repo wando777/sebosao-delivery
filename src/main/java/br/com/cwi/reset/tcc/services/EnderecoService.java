@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 import br.com.cwi.reset.tcc.dominio.Endereco;
 import br.com.cwi.reset.tcc.dominio.Usuario;
-import br.com.cwi.reset.tcc.exceptions.objetoNuloException;
+import br.com.cwi.reset.tcc.exceptions.ObjetoNuloException;
 import br.com.cwi.reset.tcc.repositories.EnderecoRepository;
 import br.com.cwi.reset.tcc.repositories.UsuarioRepository;
 
@@ -37,7 +37,7 @@ public class EnderecoService {
 	public Endereco buscarEnderecoPorId(Long id) {
 		Optional<Endereco> end = enderecoRepository.findById(id);
 		if (end.isEmpty()) {
-			throw new objetoNuloException("Este endereço não foi cadastrado");
+			throw new ObjetoNuloException("Este endereço não foi cadastrado");
 		}
 		return end.get();
 	}
@@ -46,7 +46,7 @@ public class EnderecoService {
 		Usuario user = usuarioService.buscarUsuarioPorId(id);
 		Endereco end = buscarEnderecoPorId(idEndereco);
 		if (!validaEnderecoDoUsuario(end, user)) {
-			throw new objetoNuloException("Não foi encontrado o endereço de id: " + idEndereco + " para o usuario.");
+			throw new ObjetoNuloException("Não foi encontrado o endereço de id: " + idEndereco + " para o usuario.");
 		}
 		user.getEnderecos().remove(end);
 		usuarioRepository.save(user);
