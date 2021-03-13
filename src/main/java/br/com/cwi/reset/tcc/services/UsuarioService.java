@@ -55,7 +55,7 @@ public class UsuarioService {
 		}
 		Usuario usuarioNovo = buscarUsuarioPorId(id);
 		BeanUtils.copyProperties(usuario, usuarioNovo, "id", "cpf");
-		//TODO Remover o antigo endereço cadastrado
+		// TODO Remover o antigo endereço cadastrado
 		return usuarioRepository.save(usuarioNovo);
 	}
 

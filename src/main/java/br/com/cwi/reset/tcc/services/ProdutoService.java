@@ -1,14 +1,20 @@
 package br.com.cwi.reset.tcc.services;
 
+import java.util.Optional;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import br.com.cwi.reset.tcc.dominio.Estabelecimento;
 import br.com.cwi.reset.tcc.dominio.Produto;
 import br.com.cwi.reset.tcc.dominio.dto.ProdutoDTO;
+import br.com.cwi.reset.tcc.exceptions.ObjetoNuloException;
 import br.com.cwi.reset.tcc.repositories.ProdutoRepository;
 
 @Service
@@ -22,7 +28,7 @@ public class ProdutoService {
 
 	public Produto salvarProduto(@Valid Produto produto) {
 		produto.setId(null);
-		validarProduto(produto);
+
 		// Estabelecimento estabelecimento =
 		// estabelecimentoService.buscarEstabelecimentoPorId();
 
@@ -35,16 +41,31 @@ public class ProdutoService {
 		Produto produto = new Produto();
 		BeanUtils.copyProperties(produtodto, produto, "idEstabelecimento");
 		produto.setEstabelecimento(estabelecimento);
+		validarProduto(produto);
 		return produtoRepository.save(produto);
 	}
 
-	private void validarProduto(@Valid Produto produto) {
-		// TODO Auto-generated method stub
-
+	private void validarProduto(Produto produto) {
+		if (produto.getTempoPreparo() == null) {
+			produto.setTempoPreparo(30);
+		}
 	}
 
 	public Produto buscarProdutoPorId(Long id) {
-		return produtoRepository.findById(id).get();
+		Optional<Produto> produto = produtoRepository.findById(id);
+		if (produto.isEmpty()) {
+			throw new ObjetoNuloException("O usuário não existe");
+		}
+		return produto.get();
+	}
+
+	public Page<Produto> paginarUsuarios(Integer pagina, Integer linhas) {
+		PageRequest pageRequest = PageRequest.of(pagina, linhas, Direction.valueOf("ASC"), "descricao");
+		return produtoRepository.findAll(pageRequest);
+	}
+
+	public void removerProduto(Long id) {
+		produtoRepository.delete(buscarProdutoPorId(id));
 	}
 
 }
