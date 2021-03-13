@@ -2,13 +2,17 @@ package br.com.cwi.reset.tcc.services;
 
 import java.util.Optional;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import br.com.cwi.reset.tcc.dominio.Endereco;
+import br.com.cwi.reset.tcc.dominio.Estabelecimento;
 import br.com.cwi.reset.tcc.dominio.Usuario;
 import br.com.cwi.reset.tcc.exceptions.ObjetoNuloException;
 import br.com.cwi.reset.tcc.repositories.EnderecoRepository;
+import br.com.cwi.reset.tcc.repositories.EstabelecimentoRepository;
 import br.com.cwi.reset.tcc.repositories.UsuarioRepository;
 
 @Service
@@ -19,6 +23,12 @@ public class EnderecoService {
 
 	@Autowired
 	private UsuarioRepository usuarioRepository;
+
+	@Autowired
+	private EstabelecimentoRepository estabelecimentoRepository;
+
+	@Autowired
+	private EstabelecimentoService estabelecimentoService;
 
 	@Autowired
 	private UsuarioService usuarioService;
@@ -57,6 +67,24 @@ public class EnderecoService {
 //		List<Endereco> enderecos = usuario.getEnderecos().stream().filter(end -> end.equals(endereco))
 //				.collect(Collectors.toList());
 		return usuario.getEnderecos().contains(endereco);
+	}
+
+	public void salvarEnderecoPorEstabelecimento(Long id, @Valid Endereco endereco) {
+		Estabelecimento estabelecimento = estabelecimentoService.buscarEstabelecimentoPorId(id);
+		estabelecimento.getEnderecos().add(endereco);
+		estabelecimentoRepository.save(estabelecimento);
+	}
+
+	public void removerEnderecoPorEstabelecimento(Long id, Long idEndereco) {
+		Estabelecimento estabelecimento = estabelecimentoService.buscarEstabelecimentoPorId(id);
+		Endereco end = buscarEnderecoPorId(idEndereco);
+		if (!estabelecimento.getEnderecos().contains(end)) {
+			throw new ObjetoNuloException(
+					"Não foi encontrado o endereço de id: " + idEndereco + " para o estabelecimento.");
+		}
+		estabelecimento.getEnderecos().remove(end);
+		estabelecimentoRepository.save(estabelecimento);
+		enderecoRepository.deleteById(idEndereco);
 	}
 
 }

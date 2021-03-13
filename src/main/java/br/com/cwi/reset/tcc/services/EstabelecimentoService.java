@@ -1,5 +1,7 @@
 package br.com.cwi.reset.tcc.services;
 
+import java.util.Optional;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +55,14 @@ public class EstabelecimentoService {
 	public Page<Estabelecimento> paginarEstabelecimentos(Integer pagina, Integer linhas) {
 		PageRequest pageRequest = PageRequest.of(pagina, linhas, Direction.valueOf("ASC"), "nomeFantasia");
 		return estabelecimentoRepository.findAll(pageRequest);
+	}
+
+	public Estabelecimento buscarEstabelecimentoPorId(Long id) {
+		Optional<Estabelecimento> estabelecimento = estabelecimentoRepository.findById(id);
+		if (estabelecimento.isEmpty()) {
+			throw new ObjetoNuloException("O estabelecimento não existe");
+		}
+		return estabelecimento.get();
 	}
 
 }
