@@ -3,6 +3,9 @@ package br.com.cwi.reset.tcc.services;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import br.com.cwi.reset.tcc.dominio.Estabelecimento;
@@ -30,7 +33,8 @@ public class EstabelecimentoService {
 		estabelecimento.getHorariosFuncionamento().forEach(horario -> {
 			if (isVazio(horario)) {
 				throw new ObjetoNuloException("É preciso definir um horário de funcionamento");
-			};
+			}
+			;
 		});
 
 	}
@@ -44,6 +48,11 @@ public class EstabelecimentoService {
 			retorno = true;
 		}
 		return retorno;
+	}
+
+	public Page<Estabelecimento> paginarEstabelecimentos(Integer pagina, Integer linhas) {
+		PageRequest pageRequest = PageRequest.of(pagina, linhas, Direction.valueOf("ASC"), "nomeFantasia");
+		return estabelecimentoRepository.findAll(pageRequest);
 	}
 
 }

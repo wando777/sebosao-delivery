@@ -64,7 +64,7 @@ public class UsuarioController {
 
 	@PutMapping("/{id}")
 	public ResponseEntity<Usuario> atualizar(@PathVariable Long id, @RequestBody Usuario usuario) {
-		//TODO Validar os parâmetros de usuário e ignorar o CPF
+		// TODO Validar os parâmetros de usuário e ignorar o CPF
 		Usuario usuarioNovo = usuarioService.atualizar(id, usuario);
 		return ResponseEntity.ok(usuarioNovo);
 	}
