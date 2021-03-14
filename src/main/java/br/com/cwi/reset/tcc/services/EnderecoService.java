@@ -52,12 +52,17 @@ public class EnderecoService {
 		return end.get();
 	}
 
-	public void removerEnderecoPorUsuario(Long id, Long idEndereco) {
-		Usuario user = usuarioService.buscarUsuarioPorId(id);
+	public Endereco buscarEnderecoPorUsuario(Long idEndereco, Usuario usuario) {
 		Endereco end = buscarEnderecoPorId(idEndereco);
-		if (!validaEnderecoDoUsuario(end, user)) {
+		if (!validaEnderecoDoUsuario(end, usuario)) {
 			throw new ObjetoNuloException("Não foi encontrado o endereço de id: " + idEndereco + " para o usuario.");
 		}
+		return end;
+	}
+
+	public void removerEnderecoPorUsuario(Long id, Long idEndereco) {
+		Usuario user = usuarioService.buscarUsuarioPorId(id);
+		Endereco end = buscarEnderecoPorUsuario(idEndereco, user);
 		user.getEnderecos().remove(end);
 		usuarioRepository.save(user);
 		enderecoRepository.deleteById(idEndereco);

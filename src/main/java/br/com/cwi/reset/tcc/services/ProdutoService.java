@@ -26,15 +26,6 @@ public class ProdutoService {
 	@Autowired
 	private EstabelecimentoService estabelecimentoService;
 
-	public Produto salvarProduto(@Valid Produto produto) {
-		produto.setId(null);
-
-		// Estabelecimento estabelecimento =
-		// estabelecimentoService.buscarEstabelecimentoPorId();
-
-		return produtoRepository.save(produto);
-	}
-
 	public Produto salvarProduto(@Valid ProdutoDTO produtodto) {
 		Estabelecimento estabelecimento = estabelecimentoService
 				.buscarEstabelecimentoPorId(produtodto.getIdEstabelecimento());
@@ -54,7 +45,7 @@ public class ProdutoService {
 	public Produto buscarProdutoPorId(Long id) {
 		Optional<Produto> produto = produtoRepository.findById(id);
 		if (produto.isEmpty()) {
-			throw new ObjetoNuloException("O usuário não existe");
+			throw new ObjetoNuloException("O produto não existe");
 		}
 		return produto.get();
 	}

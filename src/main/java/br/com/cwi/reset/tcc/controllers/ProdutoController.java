@@ -35,9 +35,9 @@ public class ProdutoController {
 	}
 
 	@PostMapping
-	public ResponseEntity<Produto> salvarProduto(@RequestBody @Valid ProdutoDTO produtodto,
+	public ResponseEntity<Produto> salvarProduto(@RequestBody @Valid ProdutoDTO produtoDto,
 			HttpServletResponse response) {
-		Produto produtoSalvo = produtoService.salvarProduto(produtodto);
+		Produto produtoSalvo = produtoService.salvarProduto(produtoDto);
 		return ResponseEntity.status(HttpStatus.CREATED).body(produtoSalvo);
 	}
 	
