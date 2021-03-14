@@ -4,69 +4,81 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
+
+import org.hibernate.validator.constraints.br.CPF;
 
 @Entity
 public class Entregador {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	public static final String REGEX_PLACA_VEICULO = ("([A-Z]{3}[ ])([0-9]{1}[A-Z]{1}[0-9]{2})|([A-Z]{3}[ ])([0-9]{4})");
 
-    private String cpf;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    private String nome;
+	@CPF
+	@NotBlank
+	private String cpf;
 
-    private String telefone;
+	@NotBlank
+	private String nome;
 
-    private String placaVeiculo;
+	@NotBlank
+	private String telefone;
 
-    private Boolean disponivel = true;
+	@NotBlank
+	@Pattern(regexp = REGEX_PLACA_VEICULO, message = "Não é possível cadastrar um entregador com uma placa de veículo fora do padrão: 'AAA 9999' ou 'AAA 9A99'")
+	private String placaVeiculo;
 
-    public Long getId() {
-        return id;
-    }
+	private Boolean disponivel = true;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	public Long getId() {
+		return id;
+	}
 
-    public String getCpf() {
-        return cpf;
-    }
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-    public void setCpf(String cpf) {
-        this.cpf = cpf;
-    }
+	public String getCpf() {
+		return cpf;
+	}
 
-    public String getNome() {
-        return nome;
-    }
+	public void setCpf(String cpf) {
+		this.cpf = cpf;
+	}
 
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
+	public String getNome() {
+		return nome;
+	}
 
-    public String getTelefone() {
-        return telefone;
-    }
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
 
-    public void setTelefone(String telefone) {
-        this.telefone = telefone;
-    }
+	public String getTelefone() {
+		return telefone;
+	}
 
-    public String getPlacaVeiculo() {
-        return placaVeiculo;
-    }
+	public void setTelefone(String telefone) {
+		this.telefone = telefone;
+	}
 
-    public void setPlacaVeiculo(String placaVeiculo) {
-        this.placaVeiculo = placaVeiculo;
-    }
+	public String getPlacaVeiculo() {
+		return placaVeiculo;
+	}
 
-    public Boolean getDisponivel() {
-        return disponivel;
-    }
+	public void setPlacaVeiculo(String placaVeiculo) {
+		this.placaVeiculo = placaVeiculo;
+	}
 
-    public void setDisponivel(Boolean disponivel) {
-        this.disponivel = disponivel;
-    }
+	public Boolean getDisponivel() {
+		return disponivel;
+	}
+
+	public void setDisponivel(Boolean disponivel) {
+		this.disponivel = disponivel;
+	}
 }

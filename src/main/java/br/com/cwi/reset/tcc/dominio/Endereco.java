@@ -9,95 +9,95 @@ import javax.validation.constraints.Pattern;
 
 @Entity
 public class Endereco {
-	
+
 	public static final String REGEX_CEP = "[0-9]{5}-[0-9]{3}";
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    @NotBlank
-    @Pattern(regexp = REGEX_CEP, message = "O padrão do CEP deve ser 77777-777")
-    private String cep;
+	@NotBlank
+	@Pattern(regexp = REGEX_CEP, message = "Não é possível cadastrar um entregador com uma placa de veículo fora do padrão: 'AAA 9999' ou 'AAA 9A99'")
+	private String cep;
 
-    @NotBlank
-    private String logradouro;
+	@NotBlank
+	private String logradouro;
 
-    @NotBlank
-    private String numero;
+	@NotBlank
+	private String numero;
 
-    private String complemento;
+	private String complemento;
 
-    @NotBlank
-    private String bairro;
+	@NotBlank
+	private String bairro;
 
-    @NotBlank
-    private String cidade;
+	@NotBlank
+	private String cidade;
 
-    @NotBlank
-    private String estado;
+	@NotBlank
+	private String estado;
 
-    public Long getId() {
-        return id;
-    }
+	public Long getId() {
+		return id;
+	}
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-    public String getCep() {
-        return cep;
-    }
+	public String getCep() {
+		return cep;
+	}
 
-    public void setCep(String cep) {
-        this.cep = cep;
-    }
+	public void setCep(String cep) {
+		this.cep = cep;
+	}
 
-    public String getLogradouro() {
-        return logradouro;
-    }
+	public String getLogradouro() {
+		return logradouro;
+	}
 
-    public void setLogradouro(String logradouro) {
-        this.logradouro = logradouro;
-    }
+	public void setLogradouro(String logradouro) {
+		this.logradouro = logradouro;
+	}
 
-    public String getNumero() {
-        return numero;
-    }
+	public String getNumero() {
+		return numero;
+	}
 
-    public void setNumero(String numero) {
-        this.numero = numero;
-    }
+	public void setNumero(String numero) {
+		this.numero = numero;
+	}
 
-    public String getComplemento() {
-        return complemento;
-    }
+	public String getComplemento() {
+		return complemento;
+	}
 
-    public void setComplemento(String complemento) {
-        this.complemento = complemento;
-    }
+	public void setComplemento(String complemento) {
+		this.complemento = complemento;
+	}
 
-    public String getBairro() {
-        return bairro;
-    }
+	public String getBairro() {
+		return bairro;
+	}
 
-    public void setBairro(String bairro) {
-        this.bairro = bairro;
-    }
+	public void setBairro(String bairro) {
+		this.bairro = bairro;
+	}
 
-    public String getCidade() {
-        return cidade;
-    }
+	public String getCidade() {
+		return cidade;
+	}
 
-    public void setCidade(String cidade) {
-        this.cidade = cidade;
-    }
+	public void setCidade(String cidade) {
+		this.cidade = cidade;
+	}
 
-    public String getEstado() {
-        return estado;
-    }
+	public String getEstado() {
+		return estado;
+	}
 
-    public void setEstado(String estado) {
-        this.estado = estado;
-    }
+	public void setEstado(String estado) {
+		this.estado = estado;
+	}
 }
