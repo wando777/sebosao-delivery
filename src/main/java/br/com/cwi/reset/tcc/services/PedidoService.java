@@ -1,5 +1,6 @@
 package br.com.cwi.reset.tcc.services;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import br.com.cwi.reset.tcc.dominio.Endereco;
 import br.com.cwi.reset.tcc.dominio.Estabelecimento;
+import br.com.cwi.reset.tcc.dominio.FormaPagamento;
 import br.com.cwi.reset.tcc.dominio.Pedido;
 import br.com.cwi.reset.tcc.dominio.Produto;
 import br.com.cwi.reset.tcc.dominio.StatusPedido;
@@ -51,8 +53,10 @@ public class PedidoService {
 		Endereco endereco = enderecoService.buscarEnderecoPorUsuario(pedidoDto.getIdEnderecoEntrega(), usuario);
 
 		List<Produto> produtos = new ArrayList<Produto>();
-		LocalTime horaDoPedido = DataUtils.horaAgora();
-		LocalTime entrega;
+		LocalDateTime horaDoPedido = LocalDateTime.now();
+		Integer tempoPreparo = 0;
+		BigDecimal valorTotal = new BigDecimal(0.0);
+		
 		for (ItemPedidoDTO p : pedidoDto.getItens()) {
 			Produto produto = produtoService.buscarProdutoPorId(p.getIdProduto());
 			if (produto.getEstabelecimento().equals(estabelecimento)) {
@@ -63,21 +67,28 @@ public class PedidoService {
 				throw new QuantidadeMaximaDeProdutosExcedidaException(
 						"A quantidade máxima de produtos é " + QUANTIDADE_MAXIMA_DE_PRODUTOS);
 			}
-			//TODO Fazer entrega = horário somado o tempo de preparo - horaAgora;
-			entrega = horaDoPedido.plusMinutes(p.getQuantidade()*produto.getTempoPreparo());
+			tempoPreparo += p.getQuantidade() * produto.getTempoPreparo();
+			valorTotal.add(produto.getValor().multiply(new BigDecimal(p.getQuantidade())));
 			produtos.add(produto);
 		}
+		LocalDateTime entrega = horaDoPedido.plusMinutes(tempoPreparo);
 		validarPedido(estabelecimento, pedidoDto, usuario);
-		
-		Pedido pedido = new Pedido();
-		pedido.setStatus(StatusPedido.EM_PREPARO);
 
+		Pedido pedido = new Pedido();
+		pedido.setEnderecoEntrega(endereco);
+		pedido.setEstabelecimento(estabelecimento);
+		pedido.setFormaPagamento(pedidoDto.getFormaPagamento());
+		pedido.setStatus(StatusPedido.EM_PREPARO);
+		pedido.setHorarioSolicitacao(horaDoPedido);
+		pedido.setHorarioSaiuParaEntrega(entrega);
+		pedido.setSolicitante(usuario);
+		pedido.setValorTotal(valorTotal);
 		return pedidoRepository.save(pedido);
 	}
 
 	@SuppressWarnings("unlikely-arg-type")
 	private void validarPedido(Estabelecimento estabelecimento, PedidoDTO pedidoDto, Usuario usuario) {
-		String formaPagamento = pedidoDto.getFormaPagamento();
+		FormaPagamento formaPagamento = pedidoDto.getFormaPagamento();
 		if (!estabelecimento.getFormasPagamento().contains(formaPagamento)) {
 			// TODO MODIFICAR O TIPO DA EXCEÇÃO
 			throw new IllegalArgumentException("Esse estabelecimento não aceita essa forma de pagamento");
@@ -91,7 +102,8 @@ public class PedidoService {
 						|| DataUtils.horaAgora().isAfter(hr.getHorarioFechamento())) {
 					throw new IllegalArgumentException("O estabelecimento está fechado");
 				}
-			};
+			}
+			;
 		});
 	}
 

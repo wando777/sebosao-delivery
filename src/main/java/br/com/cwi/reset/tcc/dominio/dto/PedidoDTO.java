@@ -5,6 +5,7 @@ import java.util.List;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import br.com.cwi.reset.tcc.dominio.FormaPagamento;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -22,7 +23,7 @@ public class PedidoDTO {
 	private Long idEnderecoEntrega;
 
 	@NotBlank
-	private String formaPagamento;
+	private FormaPagamento formaPagamento;
 
 	@NotNull
 	private List<ItemPedidoDTO> itens;

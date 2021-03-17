@@ -1,6 +1,9 @@
 package br.com.cwi.reset.tcc.dominio;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+
+import lombok.NoArgsConstructor;
+
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
@@ -9,6 +12,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
+@NoArgsConstructor
 public class Pedido {
 
     @Id
@@ -58,8 +62,40 @@ public class Pedido {
     @ManyToOne
     @JoinColumn(name = "id_entregador")
     private Entregador entregador;
+    
+    /**
+	 * @param solicitante
+	 * @param enderecoEntrega
+	 * @param estabelecimento
+	 * @param itensPedido
+	 * @param formaPagamento
+	 * @param status
+	 * @param horarioSolicitacao
+	 * @param horarioSaiuParaEntrega
+	 * @param horarioEntrega
+	 * @param horarioCancelamento
+	 * @param valorTotal
+	 * @param entregador
+	 */
+	public Pedido(Usuario solicitante, Endereco enderecoEntrega, Estabelecimento estabelecimento,
+			List<ItemPedido> itensPedido, FormaPagamento formaPagamento, StatusPedido status,
+			LocalDateTime horarioSolicitacao, LocalDateTime horarioSaiuParaEntrega, LocalDateTime horarioEntrega,
+			LocalDateTime horarioCancelamento, BigDecimal valorTotal, Entregador entregador) {
+		this.solicitante = solicitante;
+		this.enderecoEntrega = enderecoEntrega;
+		this.estabelecimento = estabelecimento;
+		this.itensPedido = itensPedido;
+		this.formaPagamento = formaPagamento;
+		this.status = status;
+		this.horarioSolicitacao = horarioSolicitacao;
+		this.horarioSaiuParaEntrega = horarioSaiuParaEntrega;
+		this.horarioEntrega = horarioEntrega;
+		this.horarioCancelamento = horarioCancelamento;
+		this.valorTotal = valorTotal;
+		this.entregador = entregador;
+	}
 
-    public Long getId() {
+	public Long getId() {
         return id;
     }
 
