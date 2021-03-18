@@ -2,7 +2,6 @@ package br.com.cwi.reset.tcc.dominio.dto;
 
 import java.util.List;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import br.com.cwi.reset.tcc.dominio.FormaPagamento;
@@ -22,7 +21,7 @@ public class PedidoDTO {
 	@NotNull
 	private Long idEnderecoEntrega;
 
-	@NotBlank
+	@NotNull
 	private FormaPagamento formaPagamento;
 
 	@NotNull

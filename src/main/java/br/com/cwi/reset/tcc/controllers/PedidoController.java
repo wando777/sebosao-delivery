@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.cwi.reset.tcc.dominio.Pedido;
 import br.com.cwi.reset.tcc.dominio.dto.PedidoDTO;
+import br.com.cwi.reset.tcc.dominio.dto.VisualizarPedidoDTO;
 import br.com.cwi.reset.tcc.services.PedidoService;
 
 @RestController
@@ -23,8 +23,8 @@ public class PedidoController {
 	private PedidoService pedidoService;
 
 	@PostMapping
-	public ResponseEntity<Pedido> salvarProduto(@RequestBody @Valid PedidoDTO pedidoDto, HttpServletResponse response) {
-		Pedido pedidoSalvo = pedidoService.salvarProduto(pedidoDto);
+	public ResponseEntity<VisualizarPedidoDTO> salvarProduto(@RequestBody @Valid PedidoDTO pedidoDto, HttpServletResponse response) {
+		VisualizarPedidoDTO pedidoSalvo = pedidoService.salvarProduto(pedidoDto);
 		return ResponseEntity.status(HttpStatus.CREATED).body(pedidoSalvo);
 	}
 
