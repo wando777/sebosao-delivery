@@ -32,7 +32,7 @@ public class PedidoMapper {
 		pedido.setFormaPagamento(pedidoDto.getFormaPagamento());
 		pedido.setStatus(StatusPedido.EM_PREPARO);
 		pedido.setHorarioSolicitacao(horaDoPedido);
-		pedido.setHorarioSaiuParaEntrega(entrega);
+		pedido.setHorarioEntrega(entrega);
 		pedido.setSolicitante(usuario);
 		pedido.setValorTotal(valorTotal);
 		return pedido;

@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.validation.Valid;
 
@@ -15,11 +16,15 @@ import br.com.cwi.reset.tcc.dominio.Estabelecimento;
 import br.com.cwi.reset.tcc.dominio.FormaPagamento;
 import br.com.cwi.reset.tcc.dominio.Pedido;
 import br.com.cwi.reset.tcc.dominio.Produto;
+import br.com.cwi.reset.tcc.dominio.StatusPedido;
 import br.com.cwi.reset.tcc.dominio.Usuario;
 import br.com.cwi.reset.tcc.dominio.dto.ItemPedidoDTO;
 import br.com.cwi.reset.tcc.dominio.dto.PedidoDTO;
 import br.com.cwi.reset.tcc.dominio.dto.VisualizarPedidoDTO;
 import br.com.cwi.reset.tcc.exceptions.FormaDePagamentoInvalidaException;
+import br.com.cwi.reset.tcc.exceptions.HorarioInvalidoException;
+import br.com.cwi.reset.tcc.exceptions.ObjetoNuloException;
+import br.com.cwi.reset.tcc.exceptions.PedidoComStatusInvalidoException;
 import br.com.cwi.reset.tcc.exceptions.ProdutoNaoPertenceAoEstabelecimentoException;
 import br.com.cwi.reset.tcc.exceptions.QuantidadeMaximaDeProdutosExcedidaException;
 import br.com.cwi.reset.tcc.exceptions.UsuarioSemEnderecoException;
@@ -55,8 +60,7 @@ public class PedidoService {
 		Endereco endereco = enderecoService.buscarEnderecoPorUsuario(pedidoDto.getIdEnderecoEntrega(), usuario);
 
 		List<Produto> produtos = new ArrayList<Produto>();
-		// TODO TIRAR O MINUSHOUR() QUE FIZ PARA FUNCIONAR DEPOIS DAS 23 HRS
-		LocalDateTime horaDoPedido = LocalDateTime.now().minusHours(7l);
+		LocalDateTime horaDoPedido = LocalDateTime.now();
 		Integer tempoPreparo = 0;
 		BigDecimal valorTotal = new BigDecimal(0.0);
 
@@ -87,6 +91,31 @@ public class PedidoService {
 		return visualizar;
 	}
 
+	public void cancelarPedido(Long id) {
+		Pedido pedido = buscarPedido(id);
+		validarCancelamento(pedido);
+		pedido.setStatus(StatusPedido.CANCELADO);
+		pedido.setHorarioCancelamento(LocalDateTime.now());
+		pedidoRepository.save(pedido);
+	}
+
+	private Pedido buscarPedido(Long id) {
+		Optional<Pedido> pedido = pedidoRepository.findById(id);
+		if (pedido.isEmpty()) {
+			throw new ObjetoNuloException("O pedido não existe");
+		}
+		return pedido.get();
+	}
+
+	private void validarCancelamento(Pedido pedido) {
+		if (!pedido.getStatus().equals(StatusPedido.EM_PREPARO)) {
+			throw new PedidoComStatusInvalidoException("Este pedido não está em preparo e não pode ser cancelado");
+		}
+		if (LocalDateTime.now().minusMinutes(10).isAfter(pedido.getHorarioSolicitacao())) {
+			throw new HorarioInvalidoException("O pedido só pode ser cancelado em até 10 minutos");
+		}
+	}
+
 	private void validarPedido(Estabelecimento estabelecimento, PedidoDTO pedidoDto, Usuario usuario) {
 		FormaPagamento formaPagamento = pedidoDto.getFormaPagamento();
 		if (!estabelecimento.getFormasPagamento().contains(formaPagamento)) {
@@ -100,23 +129,11 @@ public class PedidoService {
 				// TODO TIRAR O MINUSHOUR() QUE FIZ PARA FUNCIONAR DEPOIS DAS 23 HRS
 				if (DataUtils.horaAgora().minusHours(7l).isBefore(hr.getHorarioAbertura())
 						|| DataUtils.horaAgora().minusHours(7l).isAfter(hr.getHorarioFechamento())) {
-					throw new IllegalArgumentException("O estabelecimento está fechado");
+					throw new HorarioInvalidoException("O estabelecimento está fechado");
 				}
 			}
 			;
 		});
 	}
-
-//	private List<Object> obterDados(PedidoDTO pedidoDto) {
-//		List<Object> dados = new ArrayList<Object>();
-//		Estabelecimento estabelecimento = estabelecimentoService
-//				.buscarEstabelecimentoPorId(pedidoDto.getIdEstabelecimento());
-//		Usuario usuario = usuarioService.buscarUsuarioPorId(pedidoDto.getIdUsuarioSolicitante());
-//		Endereco endereco = enderecoService.buscarEnderecoPorUsuario(pedidoDto.getIdEnderecoEntrega(), usuario);
-//		dados.add(estabelecimento);
-//		dados.add(usuario);
-//		dados.add(endereco);
-//		return dados;
-//	}
 
 }
