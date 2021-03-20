@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,11 +26,17 @@ public class PedidoController {
 	private PedidoService pedidoService;
 
 	@PostMapping
-	public ResponseEntity<VisualizarPedidoDTO> salvarProduto(@RequestBody @Valid PedidoDTO pedidoDto, HttpServletResponse response) {
+	public ResponseEntity<VisualizarPedidoDTO> salvarProduto(@RequestBody @Valid PedidoDTO pedidoDto,
+			HttpServletResponse response) {
 		VisualizarPedidoDTO pedidoSalvo = pedidoService.salvarProduto(pedidoDto);
 		return ResponseEntity.status(HttpStatus.CREATED).body(pedidoSalvo);
 	}
-	
+
+	@GetMapping("/{id}")
+	public ResponseEntity<?> buscarPorId(@PathVariable Long id) {
+		return ResponseEntity.ok().body(pedidoService.buscarPedidoPorId(id));
+	}
+
 	@DeleteMapping("/{id}")
 	public void cancelarPedido(@PathVariable Long id) {
 		pedidoService.cancelarPedido(id);

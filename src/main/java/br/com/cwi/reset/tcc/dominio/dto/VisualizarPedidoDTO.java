@@ -21,5 +21,4 @@ public class VisualizarPedidoDTO implements Serializable {
 	private BigDecimal valorTotal;
 	private StatusPedido statusPedido;
 	private Endereco enderecoEntrega;
-
 }

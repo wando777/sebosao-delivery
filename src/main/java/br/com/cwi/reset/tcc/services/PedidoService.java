@@ -14,10 +14,13 @@ import org.springframework.stereotype.Service;
 import br.com.cwi.reset.tcc.dominio.Endereco;
 import br.com.cwi.reset.tcc.dominio.Estabelecimento;
 import br.com.cwi.reset.tcc.dominio.FormaPagamento;
+import br.com.cwi.reset.tcc.dominio.ItemPedido;
 import br.com.cwi.reset.tcc.dominio.Pedido;
 import br.com.cwi.reset.tcc.dominio.Produto;
 import br.com.cwi.reset.tcc.dominio.StatusPedido;
 import br.com.cwi.reset.tcc.dominio.Usuario;
+import br.com.cwi.reset.tcc.dominio.dto.ConsultarItemPedido;
+import br.com.cwi.reset.tcc.dominio.dto.ConsultarPedidoDTO;
 import br.com.cwi.reset.tcc.dominio.dto.ItemPedidoDTO;
 import br.com.cwi.reset.tcc.dominio.dto.PedidoDTO;
 import br.com.cwi.reset.tcc.dominio.dto.VisualizarPedidoDTO;
@@ -60,12 +63,14 @@ public class PedidoService {
 		Endereco endereco = enderecoService.buscarEnderecoPorUsuario(pedidoDto.getIdEnderecoEntrega(), usuario);
 
 		List<Produto> produtos = new ArrayList<Produto>();
+		List<ItemPedido> itens = new ArrayList<ItemPedido>();
 		LocalDateTime horaDoPedido = LocalDateTime.now();
 		Integer tempoPreparo = 0;
 		BigDecimal valorTotal = new BigDecimal(0.0);
 
 		for (ItemPedidoDTO p : pedidoDto.getItens()) {
 			Produto produto = produtoService.buscarProdutoPorId(p.getIdProduto());
+			ItemPedido item = new ItemPedido();
 			if (produto.getEstabelecimento().getId().compareTo(estabelecimento.getId()) != 0) {
 				throw new ProdutoNaoPertenceAoEstabelecimentoException(
 						"O Produto " + produto.getId() + " Não pertence ao estebelecimento " + estabelecimento.getId());
@@ -77,12 +82,16 @@ public class PedidoService {
 			tempoPreparo += p.getQuantidade() * produto.getTempoPreparo();
 			valorTotal = valorTotal.add(produto.getValor().multiply(new BigDecimal(p.getQuantidade())));
 			produtos.add(produto);
+			// XXX Devo fazer um mapper pra isso também?
+			item.setProduto(produto);
+			item.setQuantidade(p.getQuantidade());
+			itens.add(item);
 		}
 		LocalDateTime entrega = horaDoPedido.plusMinutes(tempoPreparo);
 		validarPedido(estabelecimento, pedidoDto, usuario);
 
 		Pedido pedido = PedidoMapper.mapearPedido(endereco, estabelecimento, pedidoDto, horaDoPedido, entrega, usuario,
-				valorTotal);
+				valorTotal, itens);
 		pedidoRepository.save(pedido);
 
 		VisualizarPedidoDTO visualizar = PedidoMapper.mapearVisualizacaoPedido(pedido.getId(), endereco,
@@ -126,7 +135,7 @@ public class PedidoService {
 		}
 		estabelecimento.getHorariosFuncionamento().forEach(hr -> {
 			if (hr.getDiaSemana().equals(DataUtils.diaDaSemanaHoje())) {
-				// TODO TIRAR O MINUSHOUR() QUE FIZ PARA FUNCIONAR DEPOIS DAS 23 HRS
+				// FIXME TIRAR O MINUSHOUR() QUE FIZ PARA FUNCIONAR DEPOIS DAS 23 HRS
 				if (DataUtils.horaAgora().minusHours(7l).isBefore(hr.getHorarioAbertura())
 						|| DataUtils.horaAgora().minusHours(7l).isAfter(hr.getHorarioFechamento())) {
 					throw new HorarioInvalidoException("O estabelecimento está fechado");
@@ -134,6 +143,22 @@ public class PedidoService {
 			}
 			;
 		});
+	}
+
+	public ConsultarPedidoDTO buscarPedidoPorId(Long id) {
+		Pedido pedido = buscarPedido(id);
+		List<ConsultarItemPedido> itens = new ArrayList<ConsultarItemPedido>();
+		pedido.getItensPedido().forEach(item -> {
+			// XXX Devo por isso num mapper?
+			ConsultarItemPedido itenSalvo = new ConsultarItemPedido();
+			itenSalvo.setTitulo(item.getProduto().getTitulo());
+			itenSalvo.setQuantidade(item.getQuantidade());
+			itens.add(itenSalvo);
+		});
+		ConsultarPedidoDTO consultar = PedidoMapper.mapearConsultaPedido(pedido.getSolicitante().getNome(),
+				pedido.getEnderecoEntrega(), pedido.getEstabelecimento().getNomeFantasia(), pedido.getValorTotal(),
+				pedido.getEntregador(), pedido.getHorarioEntrega(), pedido.getStatus(), itens);
+		return consultar;
 	}
 
 }
