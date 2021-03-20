@@ -9,9 +9,11 @@ import java.util.Optional;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 
 import br.com.cwi.reset.tcc.dominio.Endereco;
+import br.com.cwi.reset.tcc.dominio.Entregador;
 import br.com.cwi.reset.tcc.dominio.Estabelecimento;
 import br.com.cwi.reset.tcc.dominio.FormaPagamento;
 import br.com.cwi.reset.tcc.dominio.ItemPedido;
@@ -31,6 +33,7 @@ import br.com.cwi.reset.tcc.exceptions.PedidoComStatusInvalidoException;
 import br.com.cwi.reset.tcc.exceptions.ProdutoNaoPertenceAoEstabelecimentoException;
 import br.com.cwi.reset.tcc.exceptions.QuantidadeMaximaDeProdutosExcedidaException;
 import br.com.cwi.reset.tcc.exceptions.UsuarioSemEnderecoException;
+import br.com.cwi.reset.tcc.repositories.EntregadorRepository;
 import br.com.cwi.reset.tcc.repositories.PedidoRepository;
 import br.com.cwi.reset.tcc.services.mappers.PedidoMapper;
 import br.com.cwi.reset.tcc.utils.DataUtils;
@@ -42,6 +45,9 @@ public class PedidoService {
 
 	@Autowired
 	private PedidoRepository pedidoRepository;
+	
+	@Autowired
+	private EntregadorRepository entregadorRepository;
 
 	@Autowired
 	private EstabelecimentoService estabelecimentoService;
@@ -54,6 +60,9 @@ public class PedidoService {
 
 	@Autowired
 	private ProdutoService produtoService;
+
+	@Autowired
+	private EntregadorService entregadorService;
 
 	public VisualizarPedidoDTO salvarProduto(@Valid PedidoDTO pedidoDto) {
 
@@ -117,9 +126,7 @@ public class PedidoService {
 	}
 
 	private void validarCancelamento(Pedido pedido) {
-		if (!pedido.getStatus().equals(StatusPedido.EM_PREPARO)) {
-			throw new PedidoComStatusInvalidoException("Este pedido não está em preparo e não pode ser cancelado");
-		}
+		validarSatusEmPreparo(pedido);
 		if (LocalDateTime.now().minusMinutes(10).isAfter(pedido.getHorarioSolicitacao())) {
 			throw new HorarioInvalidoException("O pedido só pode ser cancelado em até 10 minutos");
 		}
@@ -159,6 +166,26 @@ public class PedidoService {
 				pedido.getEnderecoEntrega(), pedido.getEstabelecimento().getNomeFantasia(), pedido.getValorTotal(),
 				pedido.getEntregador(), pedido.getHorarioEntrega(), pedido.getStatus(), itens);
 		return consultar;
+	}
+
+	public Entregador entregarPedido(Long id) {
+		Pedido pedido = buscarPedido(id);
+		validarSatusEmPreparo(pedido);
+		pedido.setEntregador(entregadorService.getEntregadorDisponivel());
+		pedido.setHorarioSaiuParaEntrega(LocalDateTime.now());
+		pedido.setStatus(StatusPedido.SAIU_PARA_ENTREGA);
+		pedido.getEntregador().setDisponivel(false);
+		
+		entregadorRepository.save(pedido.getEntregador());
+		pedidoRepository.save(pedido);
+		
+		return pedido.getEntregador();
+	}
+
+	private void validarSatusEmPreparo(Pedido pedido) {
+		if (!pedido.getStatus().equals(StatusPedido.EM_PREPARO)) {
+			throw new PedidoComStatusInvalidoException("Este pedido não está em preparo e por isso não pode ser cancelado");
+		}
 	}
 
 }

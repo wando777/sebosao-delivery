@@ -8,4 +8,6 @@ public interface EntregadorRepository extends JpaRepository<Entregador, Long>{
 
 	boolean existsByCpf(String cpf);
 
+	Entregador findFirstByDisponivel(boolean disponivel);
+
 }

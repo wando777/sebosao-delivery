@@ -27,7 +27,7 @@ public class EntregadorController {
 	@GetMapping
 	public ResponseEntity<Page<Entregador>> listar(@RequestParam(value = "pagina", defaultValue = "0") Integer pagina,
 			@RequestParam(value = "linhas", defaultValue = "10") Integer linhas) {
-		Page<Entregador> entregadores = entregadorService.paginarUsuarios(pagina, linhas);
+		Page<Entregador> entregadores = entregadorService.paginarEntregadores(pagina, linhas);
 		return ResponseEntity.ok().body(entregadores);
 	}
 

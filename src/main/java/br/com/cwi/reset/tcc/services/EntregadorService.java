@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import br.com.cwi.reset.tcc.dominio.Entregador;
 import br.com.cwi.reset.tcc.exceptions.EntidadeJaCadastradaException;
+import br.com.cwi.reset.tcc.exceptions.ObjetoNuloException;
 import br.com.cwi.reset.tcc.repositories.EntregadorRepository;
 
 @Service
@@ -30,9 +31,18 @@ public class EntregadorService {
 		}
 	}
 
-	public Page<Entregador> paginarUsuarios(Integer pagina, Integer linhas) {
+	public Page<Entregador> paginarEntregadores(Integer pagina, Integer linhas) {
 		PageRequest pageRequest = PageRequest.of(pagina, linhas, Direction.valueOf("ASC"), "nome");
 		return entregadorRepository.findAll(pageRequest);
+	}
+
+	public Entregador getEntregadorDisponivel() {
+		boolean disponivel = true;
+		Entregador entregador = entregadorRepository.findFirstByDisponivel(disponivel);
+		if (entregador == null) {
+			throw new ObjetoNuloException("Não há entregador disponível no momento, tente novamente mais tarde.");
+		}
+		return entregador;
 	}
 
 }
