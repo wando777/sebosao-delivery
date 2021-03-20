@@ -9,7 +9,6 @@ import java.util.Optional;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 
 import br.com.cwi.reset.tcc.dominio.Endereco;
@@ -45,7 +44,7 @@ public class PedidoService {
 
 	@Autowired
 	private PedidoRepository pedidoRepository;
-	
+
 	@Autowired
 	private EntregadorRepository entregadorRepository;
 
@@ -175,17 +174,38 @@ public class PedidoService {
 		pedido.setHorarioSaiuParaEntrega(LocalDateTime.now());
 		pedido.setStatus(StatusPedido.SAIU_PARA_ENTREGA);
 		pedido.getEntregador().setDisponivel(false);
-		
+
 		entregadorRepository.save(pedido.getEntregador());
 		pedidoRepository.save(pedido);
-		
+
 		return pedido.getEntregador();
 	}
 
 	private void validarSatusEmPreparo(Pedido pedido) {
 		if (!pedido.getStatus().equals(StatusPedido.EM_PREPARO)) {
-			throw new PedidoComStatusInvalidoException("Este pedido não está em preparo e por isso não pode ser cancelado");
+			throw new PedidoComStatusInvalidoException(
+					"Este pedido não está em preparo. " + pedido.getStatus().getDescricao());
 		}
+	}
+
+	private void validarSatusSaiuPraEntrega(Pedido pedido) {
+		if (!pedido.getStatus().equals(StatusPedido.SAIU_PARA_ENTREGA)) {
+			throw new PedidoComStatusInvalidoException(
+					"Este pedido não saiu para entrega. " + pedido.getStatus().getDescricao());
+		}
+	}
+
+	public Object finalizarPedido(Long id) {
+		Pedido pedido = buscarPedido(id);
+		validarSatusSaiuPraEntrega(pedido);
+		pedido.setStatus(StatusPedido.ENTREGUE);
+		pedido.setHorarioEntrega(LocalDateTime.now());
+		pedido.getEntregador().setDisponivel(true);
+
+		entregadorRepository.save(pedido.getEntregador());
+		pedidoRepository.save(pedido);
+
+		return null;
 	}
 
 }

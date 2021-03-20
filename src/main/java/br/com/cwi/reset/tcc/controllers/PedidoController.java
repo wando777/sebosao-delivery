@@ -47,4 +47,9 @@ public class PedidoController {
 	public ResponseEntity<?> entregarPedido(@PathVariable Long id) {
 		return ResponseEntity.ok(pedidoService.entregarPedido(id));
 	}
+	
+	@PutMapping("/{id}/finalizar")
+	public ResponseEntity<?> finalizarPedido(@PathVariable Long id) {
+		return ResponseEntity.ok(pedidoService.finalizarPedido(id));
+	}
 }
