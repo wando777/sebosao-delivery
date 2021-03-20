@@ -20,7 +20,7 @@ import br.com.cwi.reset.tcc.dominio.Pedido;
 import br.com.cwi.reset.tcc.dominio.Produto;
 import br.com.cwi.reset.tcc.dominio.StatusPedido;
 import br.com.cwi.reset.tcc.dominio.Usuario;
-import br.com.cwi.reset.tcc.dominio.dto.ConsultarItemPedido;
+import br.com.cwi.reset.tcc.dominio.dto.ConsultarItemPedidoDTO;
 import br.com.cwi.reset.tcc.dominio.dto.ConsultarPedidoDTO;
 import br.com.cwi.reset.tcc.dominio.dto.ItemPedidoDTO;
 import br.com.cwi.reset.tcc.dominio.dto.PedidoDTO;
@@ -153,10 +153,10 @@ public class PedidoService {
 
 	public ConsultarPedidoDTO buscarPedidoPorId(Long id) {
 		Pedido pedido = buscarPedido(id);
-		List<ConsultarItemPedido> itens = new ArrayList<ConsultarItemPedido>();
+		List<ConsultarItemPedidoDTO> itens = new ArrayList<ConsultarItemPedidoDTO>();
 		pedido.getItensPedido().forEach(item -> {
 			// XXX Devo por isso num mapper?
-			ConsultarItemPedido itenSalvo = new ConsultarItemPedido();
+			ConsultarItemPedidoDTO itenSalvo = new ConsultarItemPedidoDTO();
 			itenSalvo.setTitulo(item.getProduto().getTitulo());
 			itenSalvo.setQuantidade(item.getQuantidade());
 			itens.add(itenSalvo);

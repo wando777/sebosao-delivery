@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.cwi.reset.tcc.dominio.Endereco;
 import br.com.cwi.reset.tcc.dominio.Usuario;
+import br.com.cwi.reset.tcc.dominio.dto.UsuarioDTO;
 import br.com.cwi.reset.tcc.services.EnderecoService;
 import br.com.cwi.reset.tcc.services.UsuarioService;
 
@@ -63,9 +64,8 @@ public class UsuarioController {
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<Usuario> atualizar(@PathVariable Long id, @RequestBody Usuario usuario) {
-		// TODO Validar os parâmetros de usuário e ignorar o CPF
-		Usuario usuarioNovo = usuarioService.atualizar(id, usuario);
+	public ResponseEntity<Usuario> atualizar(@PathVariable Long id, @RequestBody @Valid UsuarioDTO usuarioDto) {
+		Usuario usuarioNovo = usuarioService.atualizar(id, usuarioDto);
 		return ResponseEntity.ok(usuarioNovo);
 	}
 }

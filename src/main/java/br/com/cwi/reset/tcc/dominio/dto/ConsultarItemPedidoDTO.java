@@ -9,7 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class ConsultarItemPedido implements Serializable {
+public class ConsultarItemPedidoDTO implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 

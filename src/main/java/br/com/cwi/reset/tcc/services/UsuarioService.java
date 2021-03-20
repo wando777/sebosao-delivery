@@ -2,7 +2,6 @@ package br.com.cwi.reset.tcc.services;
 
 import java.util.Optional;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -10,9 +9,11 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import br.com.cwi.reset.tcc.dominio.Usuario;
+import br.com.cwi.reset.tcc.dominio.dto.UsuarioDTO;
 import br.com.cwi.reset.tcc.exceptions.EntidadeJaCadastradaException;
 import br.com.cwi.reset.tcc.exceptions.ObjetoNuloException;
 import br.com.cwi.reset.tcc.repositories.UsuarioRepository;
+import br.com.cwi.reset.tcc.services.mappers.UsuarioMapper;
 
 @Service
 public class UsuarioService {
@@ -24,15 +25,6 @@ public class UsuarioService {
 		user.setId(null);
 		validaUsuario(user);
 		return usuarioRepository.save(user);
-	}
-
-	private void validaUsuario(Usuario user) {
-		if (usuarioRepository.existsByEmail(user.getEmail())) {
-			throw new EntidadeJaCadastradaException("Esse e-mail " + user.getEmail() + " já foi cadastrado.");
-		}
-		if (usuarioRepository.existsByCpf(user.getCpf())) {
-			throw new EntidadeJaCadastradaException("Esse CPF " + user.getCpf() + " já foi cadastrado.");
-		}
 	}
 
 	public Page<Usuario> paginarUsuarios(Integer pagina, Integer linhas) {
@@ -48,14 +40,25 @@ public class UsuarioService {
 		return user.get();
 	}
 
-	public Usuario atualizar(Long id, Usuario usuario) {
-		if (usuarioRepository.existsByEmail(usuario.getEmail())) {
-			throw new EntidadeJaCadastradaException("Esse e-mail " + usuario.getEmail() + " já foi cadastrado.");
-		}
+	public Usuario atualizar(Long id, UsuarioDTO usuarioDto) {
+		validaEmail(usuarioDto.getEmail());
 		Usuario usuarioNovo = buscarUsuarioPorId(id);
-		BeanUtils.copyProperties(usuario, usuarioNovo, "id", "cpf");
-		// TODO Remover o antigo endereço cadastrado
+		// BeanUtils.copyProperties(usuarioDto, usuarioNovo, "id", "cpf");
+		usuarioNovo = UsuarioMapper.usuarioMapper(usuarioDto);
 		return usuarioRepository.save(usuarioNovo);
+	}
+
+	private void validaUsuario(Usuario user) {
+		validaEmail(user.getEmail());
+		if (usuarioRepository.existsByCpf(user.getCpf())) {
+			throw new EntidadeJaCadastradaException("Esse CPF " + user.getCpf() + " já foi cadastrado.");
+		}
+	}
+
+	private void validaEmail(String email) {
+		if (usuarioRepository.existsByEmail(email)) {
+			throw new EntidadeJaCadastradaException("Esse e-mail " + email + " já foi cadastrado.");
+		}
 	}
 
 }

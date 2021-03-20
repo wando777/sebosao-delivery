@@ -11,7 +11,7 @@ import br.com.cwi.reset.tcc.dominio.ItemPedido;
 import br.com.cwi.reset.tcc.dominio.Pedido;
 import br.com.cwi.reset.tcc.dominio.StatusPedido;
 import br.com.cwi.reset.tcc.dominio.Usuario;
-import br.com.cwi.reset.tcc.dominio.dto.ConsultarItemPedido;
+import br.com.cwi.reset.tcc.dominio.dto.ConsultarItemPedidoDTO;
 import br.com.cwi.reset.tcc.dominio.dto.ConsultarPedidoDTO;
 import br.com.cwi.reset.tcc.dominio.dto.PedidoDTO;
 import br.com.cwi.reset.tcc.dominio.dto.VisualizarPedidoDTO;
@@ -47,7 +47,7 @@ public class PedidoMapper {
 
 	public static ConsultarPedidoDTO mapearConsultaPedido(String nomeSolicitante, Endereco enderecoEntrega,
 			String nomeEstabelecimento, BigDecimal valorTotal, Entregador entregador,
-			LocalDateTime horarioPrevistoParaEntrega, StatusPedido situacao, List<ConsultarItemPedido> itensPedido) {
+			LocalDateTime horarioPrevistoParaEntrega, StatusPedido situacao, List<ConsultarItemPedidoDTO> itensPedido) {
 		ConsultarPedidoDTO consultar = new ConsultarPedidoDTO();
 		consultar.setNomeSolicitante(nomeSolicitante);
 		consultar.setEnderecoEntrega(enderecoEntrega);

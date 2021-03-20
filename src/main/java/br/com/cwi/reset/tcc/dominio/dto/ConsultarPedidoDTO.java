@@ -22,7 +22,7 @@ public class ConsultarPedidoDTO implements Serializable {
 	private String nomeSolicitante;
 	private Endereco enderecoEntrega;
 	private String nomeEstabelecimento;
-	private List<ConsultarItemPedido> itensPedido;
+	private List<ConsultarItemPedidoDTO> itensPedido;
 	private BigDecimal valorTotal;
 	private Entregador entregador;
 	private LocalDateTime horarioPrevistoParaEntrega;
