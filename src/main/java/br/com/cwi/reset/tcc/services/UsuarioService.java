@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import br.com.cwi.reset.tcc.dominio.Usuario;
@@ -19,11 +20,15 @@ import br.com.cwi.reset.tcc.services.mappers.UsuarioMapper;
 public class UsuarioService {
 
 	@Autowired
+	private BCryptPasswordEncoder pass;
+
+	@Autowired
 	private UsuarioRepository usuarioRepository;
 
 	public Usuario salvarUsuario(Usuario user) {
 		user.setId(null);
 		validaUsuario(user);
+		user.setSenha(pass.encode(user.getSenha()));
 		return usuarioRepository.save(user);
 	}
 
