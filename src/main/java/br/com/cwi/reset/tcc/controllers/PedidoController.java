@@ -42,14 +42,14 @@ public class PedidoController {
 	public void cancelarPedido(@PathVariable Long id) {
 		pedidoService.cancelarPedido(id);
 	}
-	
+
 	@PutMapping("/{id}/entregar")
 	public ResponseEntity<?> entregarPedido(@PathVariable Long id) {
 		return ResponseEntity.ok(pedidoService.entregarPedido(id));
 	}
-	
+
 	@PutMapping("/{id}/finalizar")
-	public ResponseEntity<?> finalizarPedido(@PathVariable Long id) {
-		return ResponseEntity.ok(pedidoService.finalizarPedido(id));
+	public void finalizarPedido(@PathVariable Long id) {
+		pedidoService.finalizarPedido(id);
 	}
 }

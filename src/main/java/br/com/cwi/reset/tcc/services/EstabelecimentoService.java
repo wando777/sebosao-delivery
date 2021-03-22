@@ -28,17 +28,17 @@ public class EstabelecimentoService {
 		return estabelecimentoRepository.save(estabelecimento);
 	}
 
-	private void validaEstabelecimento(Estabelecimento estabelecimento) {
-		if (estabelecimentoRepository.existsByCnpj(estabelecimento.getCnpj())) {
-			throw new EntidadeJaCadastradaException("Esse CNPJ " + estabelecimento.getCnpj() + " já foi cadastrado.");
-		}
-		estabelecimento.getHorariosFuncionamento().forEach(horario -> {
-			if (isVazio(horario)) {
-				throw new ObjetoNuloException("É preciso definir um horário de funcionamento");
-			}
-			;
-		});
+	public Page<Estabelecimento> paginarEstabelecimentos(Integer pagina, Integer linhas) {
+		PageRequest pageRequest = PageRequest.of(pagina, linhas, Direction.valueOf("ASC"), "nomeFantasia");
+		return estabelecimentoRepository.findAll(pageRequest);
+	}
 
+	public Estabelecimento buscarEstabelecimentoPorId(Long id) {
+		Optional<Estabelecimento> estabelecimento = estabelecimentoRepository.findById(id);
+		if (estabelecimento.isEmpty()) {
+			throw new ObjetoNuloException("O estabelecimento não existe");
+		}
+		return estabelecimento.get();
 	}
 
 	private boolean isVazio(HorarioFuncionamento horario) {
@@ -52,17 +52,17 @@ public class EstabelecimentoService {
 		return retorno;
 	}
 
-	public Page<Estabelecimento> paginarEstabelecimentos(Integer pagina, Integer linhas) {
-		PageRequest pageRequest = PageRequest.of(pagina, linhas, Direction.valueOf("ASC"), "nomeFantasia");
-		return estabelecimentoRepository.findAll(pageRequest);
-	}
-
-	public Estabelecimento buscarEstabelecimentoPorId(Long id) {
-		Optional<Estabelecimento> estabelecimento = estabelecimentoRepository.findById(id);
-		if (estabelecimento.isEmpty()) {
-			throw new ObjetoNuloException("O estabelecimento não existe");
+	private void validaEstabelecimento(Estabelecimento estabelecimento) {
+		if (estabelecimentoRepository.existsByCnpj(estabelecimento.getCnpj())) {
+			throw new EntidadeJaCadastradaException("Esse CNPJ " + estabelecimento.getCnpj() + " já foi cadastrado.");
 		}
-		return estabelecimento.get();
+		estabelecimento.getHorariosFuncionamento().forEach(horario -> {
+			if (isVazio(horario)) {
+				throw new ObjetoNuloException("É preciso definir um horário de funcionamento");
+			}
+			;
+		});
+
 	}
 
 }

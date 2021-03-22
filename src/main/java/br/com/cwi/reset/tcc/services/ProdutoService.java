@@ -36,12 +36,6 @@ public class ProdutoService {
 		return produtoRepository.save(produto);
 	}
 
-	private void validarProduto(Produto produto) {
-		if (produto.getTempoPreparo() == null) {
-			produto.setTempoPreparo(30);
-		}
-	}
-
 	public Produto buscarProdutoPorId(Long id) {
 		Optional<Produto> produto = produtoRepository.findById(id);
 		if (produto.isEmpty()) {
@@ -57,6 +51,12 @@ public class ProdutoService {
 
 	public void removerProduto(Long id) {
 		produtoRepository.delete(buscarProdutoPorId(id));
+	}
+
+	private void validarProduto(Produto produto) {
+		if (produto.getTempoPreparo() == null) {
+			produto.setTempoPreparo(30);
+		}
 	}
 
 }

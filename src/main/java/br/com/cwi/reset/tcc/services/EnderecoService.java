@@ -68,12 +68,6 @@ public class EnderecoService {
 		enderecoRepository.deleteById(idEndereco);
 	}
 
-	public boolean validaEnderecoDoUsuario(Endereco endereco, Usuario usuario) {
-//		List<Endereco> enderecos = usuario.getEnderecos().stream().filter(end -> end.equals(endereco))
-//				.collect(Collectors.toList());
-		return usuario.getEnderecos().contains(endereco);
-	}
-
 	public void salvarEnderecoPorEstabelecimento(Long id, @Valid Endereco endereco) {
 		Estabelecimento estabelecimento = estabelecimentoService.buscarEstabelecimentoPorId(id);
 		estabelecimento.getEnderecos().add(endereco);
@@ -90,6 +84,12 @@ public class EnderecoService {
 		estabelecimento.getEnderecos().remove(end);
 		estabelecimentoRepository.save(estabelecimento);
 		enderecoRepository.deleteById(idEndereco);
+	}
+
+	public boolean validaEnderecoDoUsuario(Endereco endereco, Usuario usuario) {
+//		List<Endereco> enderecos = usuario.getEnderecos().stream().filter(end -> end.equals(endereco))
+//				.collect(Collectors.toList());
+		return usuario.getEnderecos().contains(endereco);
 	}
 
 }

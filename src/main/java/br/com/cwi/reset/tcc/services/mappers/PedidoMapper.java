@@ -60,4 +60,25 @@ public class PedidoMapper {
 		return consultar;
 	}
 
+	public static Pedido mapearCancelarPedido(Pedido pedido) {
+		pedido.setStatus(StatusPedido.CANCELADO);
+		pedido.setHorarioCancelamento(LocalDateTime.now());
+		return pedido;
+	}
+
+	public static Pedido mapearFinalizarPedido(Pedido pedido) {
+		pedido.setStatus(StatusPedido.ENTREGUE);
+		pedido.setHorarioEntrega(LocalDateTime.now());
+		pedido.getEntregador().setDisponivel(true);
+		return pedido;
+	}
+
+	public static Pedido mapearEntregarPedido(Pedido pedido, Entregador entregador) {
+		pedido.setEntregador(entregador);
+		pedido.setHorarioSaiuParaEntrega(LocalDateTime.now());
+		pedido.setStatus(StatusPedido.SAIU_PARA_ENTREGA);
+		pedido.getEntregador().setDisponivel(false);
+		return pedido;
+	}
+
 }

@@ -34,6 +34,7 @@ import br.com.cwi.reset.tcc.exceptions.QuantidadeMaximaDeProdutosExcedidaExcepti
 import br.com.cwi.reset.tcc.exceptions.UsuarioSemEnderecoException;
 import br.com.cwi.reset.tcc.repositories.EntregadorRepository;
 import br.com.cwi.reset.tcc.repositories.PedidoRepository;
+import br.com.cwi.reset.tcc.services.mappers.ConsultarItemPedidoMapper;
 import br.com.cwi.reset.tcc.services.mappers.PedidoMapper;
 import br.com.cwi.reset.tcc.utils.DataUtils;
 
@@ -70,6 +71,8 @@ public class PedidoService {
 		Usuario usuario = usuarioService.buscarUsuarioPorId(pedidoDto.getIdUsuarioSolicitante());
 		Endereco endereco = enderecoService.buscarEnderecoPorUsuario(pedidoDto.getIdEnderecoEntrega(), usuario);
 
+		validarPedido(estabelecimento, pedidoDto, usuario);
+
 		List<Produto> produtos = new ArrayList<Produto>();
 		List<ItemPedido> itens = new ArrayList<ItemPedido>();
 		LocalDateTime horaDoPedido = LocalDateTime.now();
@@ -79,24 +82,16 @@ public class PedidoService {
 		for (ItemPedidoDTO p : pedidoDto.getItens()) {
 			Produto produto = produtoService.buscarProdutoPorId(p.getIdProduto());
 			ItemPedido item = new ItemPedido();
-			if (produto.getEstabelecimento().getId().compareTo(estabelecimento.getId()) != 0) {
-				throw new ProdutoNaoPertenceAoEstabelecimentoException(
-						"O Produto " + produto.getId() + " Não pertence ao estebelecimento " + estabelecimento.getId());
-			}
-			if (p.getQuantidade() > QUANTIDADE_MAXIMA_DE_PRODUTOS) {
-				throw new QuantidadeMaximaDeProdutosExcedidaException(
-						"A quantidade máxima de produtos é " + QUANTIDADE_MAXIMA_DE_PRODUTOS);
-			}
+			validarPedido(estabelecimento, p, produto);
 			tempoPreparo += p.getQuantidade() * produto.getTempoPreparo();
 			valorTotal = valorTotal.add(produto.getValor().multiply(new BigDecimal(p.getQuantidade())));
 			produtos.add(produto);
-			// XXX Devo fazer um mapper pra isso também?
 			item.setProduto(produto);
 			item.setQuantidade(p.getQuantidade());
 			itens.add(item);
 		}
+
 		LocalDateTime entrega = horaDoPedido.plusMinutes(tempoPreparo);
-		validarPedido(estabelecimento, pedidoDto, usuario);
 
 		Pedido pedido = PedidoMapper.mapearPedido(endereco, estabelecimento, pedidoDto, horaDoPedido, entrega, usuario,
 				valorTotal, itens);
@@ -111,8 +106,7 @@ public class PedidoService {
 	public void cancelarPedido(Long id) {
 		Pedido pedido = buscarPedido(id);
 		validarCancelamento(pedido);
-		pedido.setStatus(StatusPedido.CANCELADO);
-		pedido.setHorarioCancelamento(LocalDateTime.now());
+		pedido = PedidoMapper.mapearCancelarPedido(pedido);
 		pedidoRepository.save(pedido);
 	}
 
@@ -128,6 +122,52 @@ public class PedidoService {
 		validarSatusEmPreparo(pedido);
 		if (LocalDateTime.now().minusMinutes(10).isAfter(pedido.getHorarioSolicitacao())) {
 			throw new HorarioInvalidoException("O pedido só pode ser cancelado em até 10 minutos");
+		}
+	}
+
+	public ConsultarPedidoDTO buscarPedidoPorId(Long id) {
+		Pedido pedido = buscarPedido(id);
+		List<ConsultarItemPedidoDTO> itens = new ArrayList<ConsultarItemPedidoDTO>();
+		pedido.getItensPedido().forEach(item -> {
+			ConsultarItemPedidoDTO itenSalvo = ConsultarItemPedidoMapper.mapearConsultarItemPedido(item,
+					new ConsultarItemPedidoDTO());
+			itens.add(itenSalvo);
+		});
+		ConsultarPedidoDTO consultar = PedidoMapper.mapearConsultaPedido(pedido.getSolicitante().getNome(),
+				pedido.getEnderecoEntrega(), pedido.getEstabelecimento().getNomeFantasia(), pedido.getValorTotal(),
+				pedido.getEntregador(), pedido.getHorarioEntrega(), pedido.getStatus(), itens);
+		return consultar;
+	}
+
+	public Entregador entregarPedido(Long id) {
+		Pedido pedido = buscarPedido(id);
+		validarSatusEmPreparo(pedido);
+		pedido = PedidoMapper.mapearEntregarPedido(pedido, entregadorService.getEntregadorDisponivel());
+		entregadorRepository.save(pedido.getEntregador());
+		pedidoRepository.save(pedido);
+
+		return pedido.getEntregador();
+	}
+
+	public void finalizarPedido(Long id) {
+		Pedido pedido = buscarPedido(id);
+		validarSatusSaiuPraEntrega(pedido);
+		pedido = PedidoMapper.mapearFinalizarPedido(pedido);
+		entregadorRepository.save(pedido.getEntregador());
+		pedidoRepository.save(pedido);
+	}
+
+	private void validarSatusEmPreparo(Pedido pedido) {
+		if (!pedido.getStatus().equals(StatusPedido.EM_PREPARO)) {
+			throw new PedidoComStatusInvalidoException(
+					"Este pedido não está em preparo. " + pedido.getStatus().getDescricao());
+		}
+	}
+
+	private void validarSatusSaiuPraEntrega(Pedido pedido) {
+		if (!pedido.getStatus().equals(StatusPedido.SAIU_PARA_ENTREGA)) {
+			throw new PedidoComStatusInvalidoException(
+					"Este pedido não saiu para entrega. " + pedido.getStatus().getDescricao());
 		}
 	}
 
@@ -151,61 +191,15 @@ public class PedidoService {
 		});
 	}
 
-	public ConsultarPedidoDTO buscarPedidoPorId(Long id) {
-		Pedido pedido = buscarPedido(id);
-		List<ConsultarItemPedidoDTO> itens = new ArrayList<ConsultarItemPedidoDTO>();
-		pedido.getItensPedido().forEach(item -> {
-			// XXX Devo por isso num mapper?
-			ConsultarItemPedidoDTO itenSalvo = new ConsultarItemPedidoDTO();
-			itenSalvo.setTitulo(item.getProduto().getTitulo());
-			itenSalvo.setQuantidade(item.getQuantidade());
-			itens.add(itenSalvo);
-		});
-		ConsultarPedidoDTO consultar = PedidoMapper.mapearConsultaPedido(pedido.getSolicitante().getNome(),
-				pedido.getEnderecoEntrega(), pedido.getEstabelecimento().getNomeFantasia(), pedido.getValorTotal(),
-				pedido.getEntregador(), pedido.getHorarioEntrega(), pedido.getStatus(), itens);
-		return consultar;
-	}
-
-	public Entregador entregarPedido(Long id) {
-		Pedido pedido = buscarPedido(id);
-		validarSatusEmPreparo(pedido);
-		pedido.setEntregador(entregadorService.getEntregadorDisponivel());
-		pedido.setHorarioSaiuParaEntrega(LocalDateTime.now());
-		pedido.setStatus(StatusPedido.SAIU_PARA_ENTREGA);
-		pedido.getEntregador().setDisponivel(false);
-
-		entregadorRepository.save(pedido.getEntregador());
-		pedidoRepository.save(pedido);
-
-		return pedido.getEntregador();
-	}
-
-	private void validarSatusEmPreparo(Pedido pedido) {
-		if (!pedido.getStatus().equals(StatusPedido.EM_PREPARO)) {
-			throw new PedidoComStatusInvalidoException(
-					"Este pedido não está em preparo. " + pedido.getStatus().getDescricao());
+	private void validarPedido(Estabelecimento estabelecimento, ItemPedidoDTO p, Produto produto) {
+		if (produto.getEstabelecimento().getId().compareTo(estabelecimento.getId()) != 0) {
+			throw new ProdutoNaoPertenceAoEstabelecimentoException(
+					"O Produto " + produto.getId() + " Não pertence ao estebelecimento " + estabelecimento.getId());
 		}
-	}
-
-	private void validarSatusSaiuPraEntrega(Pedido pedido) {
-		if (!pedido.getStatus().equals(StatusPedido.SAIU_PARA_ENTREGA)) {
-			throw new PedidoComStatusInvalidoException(
-					"Este pedido não saiu para entrega. " + pedido.getStatus().getDescricao());
+		if (p.getQuantidade() > QUANTIDADE_MAXIMA_DE_PRODUTOS) {
+			throw new QuantidadeMaximaDeProdutosExcedidaException(
+					"A quantidade máxima de produtos é " + QUANTIDADE_MAXIMA_DE_PRODUTOS);
 		}
-	}
-
-	public Object finalizarPedido(Long id) {
-		Pedido pedido = buscarPedido(id);
-		validarSatusSaiuPraEntrega(pedido);
-		pedido.setStatus(StatusPedido.ENTREGUE);
-		pedido.setHorarioEntrega(LocalDateTime.now());
-		pedido.getEntregador().setDisponivel(true);
-
-		entregadorRepository.save(pedido.getEntregador());
-		pedidoRepository.save(pedido);
-
-		return null;
 	}
 
 }
