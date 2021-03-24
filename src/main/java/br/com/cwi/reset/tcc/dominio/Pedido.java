@@ -1,6 +1,12 @@
 package br.com.cwi.reset.tcc.dominio;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+<<<<<<< HEAD
+=======
+
+import lombok.NoArgsConstructor;
+
+>>>>>>> be1fbd80c85c2df033be65787243fdc40bb2b70b
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
@@ -9,6 +15,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
+<<<<<<< HEAD
+=======
+@NoArgsConstructor
+>>>>>>> be1fbd80c85c2df033be65787243fdc40bb2b70b
 public class Pedido {
 
     @Id
@@ -58,8 +68,45 @@ public class Pedido {
     @ManyToOne
     @JoinColumn(name = "id_entregador")
     private Entregador entregador;
+<<<<<<< HEAD
 
     public Long getId() {
+=======
+    
+    /**
+	 * @param solicitante
+	 * @param enderecoEntrega
+	 * @param estabelecimento
+	 * @param itensPedido
+	 * @param formaPagamento
+	 * @param status
+	 * @param horarioSolicitacao
+	 * @param horarioSaiuParaEntrega
+	 * @param horarioEntrega
+	 * @param horarioCancelamento
+	 * @param valorTotal
+	 * @param entregador
+	 */
+	public Pedido(Usuario solicitante, Endereco enderecoEntrega, Estabelecimento estabelecimento,
+			List<ItemPedido> itensPedido, FormaPagamento formaPagamento, StatusPedido status,
+			LocalDateTime horarioSolicitacao, LocalDateTime horarioSaiuParaEntrega, LocalDateTime horarioEntrega,
+			LocalDateTime horarioCancelamento, BigDecimal valorTotal, Entregador entregador) {
+		this.solicitante = solicitante;
+		this.enderecoEntrega = enderecoEntrega;
+		this.estabelecimento = estabelecimento;
+		this.itensPedido = itensPedido;
+		this.formaPagamento = formaPagamento;
+		this.status = status;
+		this.horarioSolicitacao = horarioSolicitacao;
+		this.horarioSaiuParaEntrega = horarioSaiuParaEntrega;
+		this.horarioEntrega = horarioEntrega;
+		this.horarioCancelamento = horarioCancelamento;
+		this.valorTotal = valorTotal;
+		this.entregador = entregador;
+	}
+
+	public Long getId() {
+>>>>>>> be1fbd80c85c2df033be65787243fdc40bb2b70b
         return id;
     }
 

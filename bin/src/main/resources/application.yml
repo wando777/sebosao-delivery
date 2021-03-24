@@ -17,11 +17,3 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: update
-<<<<<<< HEAD
-=======
-
-jwt:
-  secret: SequenciaDeCaracteres
-  expiration: 86400000
-
->>>>>>> be1fbd80c85c2df033be65787243fdc40bb2b70b
