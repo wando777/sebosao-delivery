@@ -1,21 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<<<<<<< HEAD
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-=======
 <project xmlns="http://maven.apache.org/POM/4.0.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
->>>>>>> be1fbd80c85c2df033be65787243fdc40bb2b70b
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>2.4.3</version>
-<<<<<<< HEAD
-		<relativePath/> <!-- lookup parent from repository -->
-=======
 		<relativePath /> <!-- lookup parent from repository -->
->>>>>>> be1fbd80c85c2df033be65787243fdc40bb2b70b
 	</parent>
 	<groupId>br.com.cwi.reset</groupId>
 	<artifactId>tcc</artifactId>
@@ -58,8 +50,6 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-<<<<<<< HEAD
-=======
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
@@ -83,7 +73,6 @@
 			<version>0.7.0</version>
 		</dependency>
 
->>>>>>> be1fbd80c85c2df033be65787243fdc40bb2b70b
 	</dependencies>
 
 	<build>

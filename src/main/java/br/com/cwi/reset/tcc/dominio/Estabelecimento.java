@@ -1,10 +1,5 @@
 package br.com.cwi.reset.tcc.dominio;
 
-<<<<<<< HEAD
-import javax.persistence.*;
-import java.util.List;
-
-=======
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -21,7 +16,6 @@ import javax.persistence.OneToMany;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
->>>>>>> be1fbd80c85c2df033be65787243fdc40bb2b70b
 @Entity
 public class Estabelecimento {
 
@@ -29,12 +23,6 @@ public class Estabelecimento {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-<<<<<<< HEAD
-    private String cnpj;
-
-    private String nomeFantasia;
-
-=======
     @NotBlank
     private String cnpj;
 
@@ -42,24 +30,17 @@ public class Estabelecimento {
     private String nomeFantasia;
 
     @NotBlank
->>>>>>> be1fbd80c85c2df033be65787243fdc40bb2b70b
     private String razaoSocial;
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "id_estabelecimento")
-<<<<<<< HEAD
-=======
     @Valid
->>>>>>> be1fbd80c85c2df033be65787243fdc40bb2b70b
     private List<HorarioFuncionamento> horariosFuncionamento;
 
     @ElementCollection(targetClass = FormaPagamento.class)
     @JoinTable(name = "FORMAS_PAGAMENTO", joinColumns = @JoinColumn(name = "cnpj"))
     @Enumerated(EnumType.STRING)
-<<<<<<< HEAD
-=======
     @Valid
->>>>>>> be1fbd80c85c2df033be65787243fdc40bb2b70b
     private List<FormaPagamento> formasPagamento;
 
     @OneToMany(cascade = CascadeType.ALL)

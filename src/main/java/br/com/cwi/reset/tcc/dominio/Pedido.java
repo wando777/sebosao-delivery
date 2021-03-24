@@ -1,12 +1,9 @@
 package br.com.cwi.reset.tcc.dominio;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-<<<<<<< HEAD
-=======
 
 import lombok.NoArgsConstructor;
 
->>>>>>> be1fbd80c85c2df033be65787243fdc40bb2b70b
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
@@ -15,10 +12,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-<<<<<<< HEAD
-=======
 @NoArgsConstructor
->>>>>>> be1fbd80c85c2df033be65787243fdc40bb2b70b
 public class Pedido {
 
     @Id
@@ -68,10 +62,6 @@ public class Pedido {
     @ManyToOne
     @JoinColumn(name = "id_entregador")
     private Entregador entregador;
-<<<<<<< HEAD
-
-    public Long getId() {
-=======
     
     /**
 	 * @param solicitante
@@ -106,7 +96,6 @@ public class Pedido {
 	}
 
 	public Long getId() {
->>>>>>> be1fbd80c85c2df033be65787243fdc40bb2b70b
         return id;
     }
 

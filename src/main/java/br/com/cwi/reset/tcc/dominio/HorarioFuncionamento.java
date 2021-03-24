@@ -1,14 +1,5 @@
 package br.com.cwi.reset.tcc.dominio;
 
-<<<<<<< HEAD
-import com.fasterxml.jackson.annotation.JsonFormat;
-import org.springframework.format.annotation.DateTimeFormat;
-
-import javax.persistence.*;
-import java.time.DayOfWeek;
-import java.time.LocalTime;
-
-=======
 import java.time.DayOfWeek;
 import java.time.LocalTime;
 
@@ -24,7 +15,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
->>>>>>> be1fbd80c85c2df033be65787243fdc40bb2b70b
 @Entity
 public class HorarioFuncionamento {
 
@@ -32,10 +22,7 @@ public class HorarioFuncionamento {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-<<<<<<< HEAD
-=======
     @Valid
->>>>>>> be1fbd80c85c2df033be65787243fdc40bb2b70b
     @Enumerated(EnumType.STRING)
     private DayOfWeek diaSemana;
 
