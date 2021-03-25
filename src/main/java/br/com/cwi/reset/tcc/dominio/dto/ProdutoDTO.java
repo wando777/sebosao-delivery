@@ -6,6 +6,7 @@ import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import br.com.cwi.reset.tcc.dominio.Categoria;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -25,7 +26,7 @@ public class ProdutoDTO {
 
 	private String urlFoto;
 
-	private String categoria;
+	private Categoria categoria;
 
 	private Integer tempoPreparo;
 
@@ -34,7 +35,7 @@ public class ProdutoDTO {
 
 	public ProdutoDTO(@NotBlank String titulo, @NotBlank String descricao,
 			@DecimalMin(value = "0.0", message = "Valor mínimo deve ser igual a pelo menos R$ 0,00") @NotNull BigDecimal valor,
-			String urlFoto, String categoria, Integer tempoPreparo, Long idEstabelecimento) {
+			String urlFoto, Categoria categoria, Integer tempoPreparo, Long idEstabelecimento) {
 		this.titulo = titulo;
 		this.descricao = descricao;
 		this.valor = valor;

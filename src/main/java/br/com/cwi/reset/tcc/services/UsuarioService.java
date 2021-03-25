@@ -48,8 +48,9 @@ public class UsuarioService {
 	public Usuario atualizar(Long id, UsuarioDTO usuarioDto) {
 		validaEmail(usuarioDto.getEmail());
 		Usuario usuarioNovo = buscarUsuarioPorId(id);
+		usuarioDto.setSenha(pass.encode(usuarioDto.getSenha()));
 		// BeanUtils.copyProperties(usuarioDto, usuarioNovo, "id", "cpf");
-		usuarioNovo = UsuarioMapper.usuarioMapper(usuarioDto);
+		usuarioNovo = UsuarioMapper.usuarioMapper(usuarioDto, usuarioNovo);
 		return usuarioRepository.save(usuarioNovo);
 	}
 

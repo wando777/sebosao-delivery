@@ -23,6 +23,7 @@ import br.com.cwi.reset.tcc.dominio.Usuario;
 import br.com.cwi.reset.tcc.dominio.dto.UsuarioDTO;
 import br.com.cwi.reset.tcc.services.EnderecoService;
 import br.com.cwi.reset.tcc.services.UsuarioService;
+import io.swagger.annotations.ApiOperation;
 
 @RestController
 @RequestMapping("/usuarios")
@@ -40,12 +41,14 @@ public class UsuarioController {
 		Page<Usuario> usuarios = usuarioService.paginarUsuarios(pagina, linhas);
 		return ResponseEntity.ok().body(usuarios);
 	}
-
+	
+	@ApiOperation(value = "Busca usuário por ID.", notes = "Busca usuário de acordo com o ID especificado.")
 	@GetMapping("/{id}")
 	public ResponseEntity<?> buscarPorId(@PathVariable Long id) {
 		return ResponseEntity.ok().body(usuarioService.buscarUsuarioPorId(id));
 	}
 
+	@ApiOperation(value = "Cria um novo usuário.", notes = "Cria um novo usuário com as informações especificadas. Este usuário é necessário para logar no sistema e ter acesso a todas as requisições.")
 	@PostMapping
 	public ResponseEntity<Usuario> saveUser(@RequestBody @Valid Usuario user, HttpServletResponse response) {
 		Usuario usuarioSalvo = usuarioService.salvarUsuario(user);
@@ -58,11 +61,13 @@ public class UsuarioController {
 		enderecoService.salvarEnderecoPorUsuario(id, endereco);
 	}
 
+	@ApiOperation(value = "Remove o endereço de um usuário.", notes = "Busca usuário de acordo com o ID especificado e remove o endereço também especificado.")
 	@DeleteMapping("/{id}/enderecos/{idEndereco}")
 	public void removerEndereco(@PathVariable Long id, @PathVariable Long idEndereco) {
 		enderecoService.removerEnderecoPorUsuario(id, idEndereco);
 	}
 
+	@ApiOperation(value = "Atualiza usuário.", notes = "Atualiza cadastro do usuário.")
 	@PutMapping("/{id}")
 	public ResponseEntity<Usuario> atualizar(@PathVariable Long id, @RequestBody @Valid UsuarioDTO usuarioDto) {
 		Usuario usuarioNovo = usuarioService.atualizar(id, usuarioDto);

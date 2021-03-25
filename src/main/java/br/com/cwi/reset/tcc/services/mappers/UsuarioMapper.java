@@ -4,9 +4,8 @@ import br.com.cwi.reset.tcc.dominio.Usuario;
 import br.com.cwi.reset.tcc.dominio.dto.UsuarioDTO;
 
 public class UsuarioMapper {
-
-	public static Usuario usuarioMapper(UsuarioDTO usuarioDto) {
-		Usuario usuario = new Usuario();
+	
+	public static Usuario usuarioMapper(UsuarioDTO usuarioDto, Usuario usuario) {
 		usuario.setEmail(usuarioDto.getEmail());
 		usuario.setNome(usuarioDto.getNome());
 		usuario.setSenha(usuarioDto.getSenha());
