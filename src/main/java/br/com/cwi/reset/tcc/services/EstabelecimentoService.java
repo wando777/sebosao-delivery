@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import br.com.cwi.reset.tcc.dominio.Estabelecimento;
 import br.com.cwi.reset.tcc.dominio.HorarioFuncionamento;
 import br.com.cwi.reset.tcc.exceptions.EntidadeJaCadastradaException;
-import br.com.cwi.reset.tcc.exceptions.ObjetoNuloException;
+import br.com.cwi.reset.tcc.exceptions.ObjetoNullException;
 import br.com.cwi.reset.tcc.repositories.EstabelecimentoRepository;
 
 @Service
@@ -36,7 +36,7 @@ public class EstabelecimentoService {
 	public Estabelecimento buscarEstabelecimentoPorId(Long id) {
 		Optional<Estabelecimento> estabelecimento = estabelecimentoRepository.findById(id);
 		if (estabelecimento.isEmpty()) {
-			throw new ObjetoNuloException("O estabelecimento não existe");
+			throw new ObjetoNullException("O estabelecimento não existe");
 		}
 		return estabelecimento.get();
 	}
@@ -58,7 +58,7 @@ public class EstabelecimentoService {
 		}
 		estabelecimento.getHorariosFuncionamento().forEach(horario -> {
 			if (isVazio(horario)) {
-				throw new ObjetoNuloException("É preciso definir um horário de funcionamento");
+				throw new ObjetoNullException("É preciso definir um horário de funcionamento");
 			}
 			;
 		});

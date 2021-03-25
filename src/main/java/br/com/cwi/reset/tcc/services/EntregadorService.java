@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 import br.com.cwi.reset.tcc.dominio.Entregador;
 import br.com.cwi.reset.tcc.exceptions.EntidadeJaCadastradaException;
-import br.com.cwi.reset.tcc.exceptions.ObjetoNuloException;
+import br.com.cwi.reset.tcc.exceptions.ObjetoNullException;
 import br.com.cwi.reset.tcc.repositories.EntregadorRepository;
 
 @Service
@@ -40,7 +40,7 @@ public class EntregadorService {
 		boolean disponivel = true;
 		Entregador entregador = entregadorRepository.findFirstByDisponivel(disponivel);
 		if (entregador == null) {
-			throw new ObjetoNuloException("Não há entregador disponível no momento, tente novamente mais tarde.");
+			throw new ObjetoNullException("Não há entregador disponível no momento, tente novamente mais tarde.");
 		}
 		return entregador;
 	}

@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 import br.com.cwi.reset.tcc.dominio.Estabelecimento;
 import br.com.cwi.reset.tcc.dominio.Produto;
 import br.com.cwi.reset.tcc.dominio.dto.ProdutoDTO;
-import br.com.cwi.reset.tcc.exceptions.ObjetoNuloException;
+import br.com.cwi.reset.tcc.exceptions.ObjetoNullException;
 import br.com.cwi.reset.tcc.repositories.ProdutoRepository;
 
 @Service
@@ -39,7 +39,7 @@ public class ProdutoService {
 	public Produto buscarProdutoPorId(Long id) {
 		Optional<Produto> produto = produtoRepository.findById(id);
 		if (produto.isEmpty()) {
-			throw new ObjetoNuloException("O produto não existe");
+			throw new ObjetoNullException("O produto não existe");
 		}
 		return produto.get();
 	}

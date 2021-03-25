@@ -27,7 +27,7 @@ import br.com.cwi.reset.tcc.dominio.dto.PedidoDTO;
 import br.com.cwi.reset.tcc.dominio.dto.VisualizarPedidoDTO;
 import br.com.cwi.reset.tcc.exceptions.FormaDePagamentoInvalidaException;
 import br.com.cwi.reset.tcc.exceptions.HorarioInvalidoException;
-import br.com.cwi.reset.tcc.exceptions.ObjetoNuloException;
+import br.com.cwi.reset.tcc.exceptions.ObjetoNullException;
 import br.com.cwi.reset.tcc.exceptions.PedidoComStatusInvalidoException;
 import br.com.cwi.reset.tcc.exceptions.ProdutoNaoPertenceAoEstabelecimentoException;
 import br.com.cwi.reset.tcc.exceptions.QuantidadeMaximaDeProdutosExcedidaException;
@@ -113,7 +113,7 @@ public class PedidoService {
 	private Pedido buscarPedido(Long id) {
 		Optional<Pedido> pedido = pedidoRepository.findById(id);
 		if (pedido.isEmpty()) {
-			throw new ObjetoNuloException("O pedido não existe");
+			throw new ObjetoNullException("O pedido não existe");
 		}
 		return pedido.get();
 	}

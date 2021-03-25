@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import br.com.cwi.reset.tcc.dominio.Endereco;
 import br.com.cwi.reset.tcc.dominio.Estabelecimento;
 import br.com.cwi.reset.tcc.dominio.Usuario;
-import br.com.cwi.reset.tcc.exceptions.ObjetoNuloException;
+import br.com.cwi.reset.tcc.exceptions.ObjetoNullException;
 import br.com.cwi.reset.tcc.repositories.EnderecoRepository;
 import br.com.cwi.reset.tcc.repositories.EstabelecimentoRepository;
 import br.com.cwi.reset.tcc.repositories.UsuarioRepository;
@@ -47,7 +47,7 @@ public class EnderecoService {
 	public Endereco buscarEnderecoPorId(Long id) {
 		Optional<Endereco> end = enderecoRepository.findById(id);
 		if (end.isEmpty()) {
-			throw new ObjetoNuloException("Este endereço não foi cadastrado");
+			throw new ObjetoNullException("Este endereço não foi cadastrado");
 		}
 		return end.get();
 	}
@@ -55,7 +55,7 @@ public class EnderecoService {
 	public Endereco buscarEnderecoPorUsuario(Long idEndereco, Usuario usuario) {
 		Endereco end = buscarEnderecoPorId(idEndereco);
 		if (!validaEnderecoDoUsuario(end, usuario)) {
-			throw new ObjetoNuloException("Não foi encontrado o endereço de id: " + idEndereco + " para o usuario.");
+			throw new ObjetoNullException("Não foi encontrado o endereço de id: " + idEndereco + " para o usuario.");
 		}
 		return end;
 	}
@@ -78,7 +78,7 @@ public class EnderecoService {
 		Estabelecimento estabelecimento = estabelecimentoService.buscarEstabelecimentoPorId(id);
 		Endereco end = buscarEnderecoPorId(idEndereco);
 		if (!estabelecimento.getEnderecos().contains(end)) {
-			throw new ObjetoNuloException(
+			throw new ObjetoNullException(
 					"Não foi encontrado o endereço de id: " + idEndereco + " para o estabelecimento.");
 		}
 		estabelecimento.getEnderecos().remove(end);

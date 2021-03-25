@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import br.com.cwi.reset.tcc.dominio.Usuario;
 import br.com.cwi.reset.tcc.dominio.dto.UsuarioDTO;
 import br.com.cwi.reset.tcc.exceptions.EntidadeJaCadastradaException;
-import br.com.cwi.reset.tcc.exceptions.ObjetoNuloException;
+import br.com.cwi.reset.tcc.exceptions.ObjetoNullException;
 import br.com.cwi.reset.tcc.repositories.UsuarioRepository;
 import br.com.cwi.reset.tcc.services.mappers.UsuarioMapper;
 
@@ -40,7 +40,7 @@ public class UsuarioService {
 	public Usuario buscarUsuarioPorId(Long id) {
 		Optional<Usuario> user = usuarioRepository.findById(id);
 		if (user.isEmpty()) {
-			throw new ObjetoNuloException("O usuário não existe");
+			throw new ObjetoNullException("O usuário não existe");
 		}
 		return user.get();
 	}
