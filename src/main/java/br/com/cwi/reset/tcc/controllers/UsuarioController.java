@@ -35,6 +35,7 @@ public class UsuarioController {
 	@Autowired
 	private EnderecoService enderecoService;
 
+	@ApiOperation(value = "Lista os usuários paginados.", notes = "Lista todos os usuários de acordo com o número de linhas e página. Os elementos estão dispostos em ordem alfabética.")
 	@GetMapping
 	public ResponseEntity<Page<Usuario>> listar(@RequestParam(value = "pagina", defaultValue = "0") Integer pagina,
 			@RequestParam(value = "linhas", defaultValue = "10") Integer linhas) {

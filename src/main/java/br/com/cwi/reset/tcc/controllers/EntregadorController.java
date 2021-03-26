@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.com.cwi.reset.tcc.dominio.Entregador;
 import br.com.cwi.reset.tcc.services.EntregadorService;
+import io.swagger.annotations.ApiOperation;
 
 @RestController
 @RequestMapping("/entregadores")
@@ -24,6 +25,7 @@ public class EntregadorController {
 	@Autowired
 	private EntregadorService entregadorService;
 
+	@ApiOperation(value = "Lista os entregadores paginados.", notes = "Lista todos os entregadores de acordo com o número de linhas e página. Os elementos estão dispostos em ordem alfabética.")
 	@GetMapping
 	public ResponseEntity<Page<Entregador>> listar(@RequestParam(value = "pagina", defaultValue = "0") Integer pagina,
 			@RequestParam(value = "linhas", defaultValue = "10") Integer linhas) {
@@ -31,6 +33,7 @@ public class EntregadorController {
 		return ResponseEntity.ok().body(entregadores);
 	}
 
+	@ApiOperation(value = "Cadastra um novo entregador.", notes = "Cadastra um novo entregador com as informações especificadas.")
 	@PostMapping
 	public ResponseEntity<Entregador> salvarEntregador(@RequestBody @Valid Entregador entregador,
 			HttpServletResponse response) {

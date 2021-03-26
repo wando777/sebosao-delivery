@@ -20,6 +20,7 @@ import br.com.cwi.reset.tcc.dominio.Endereco;
 import br.com.cwi.reset.tcc.dominio.Estabelecimento;
 import br.com.cwi.reset.tcc.services.EnderecoService;
 import br.com.cwi.reset.tcc.services.EstabelecimentoService;
+import io.swagger.annotations.ApiOperation;
 
 @RestController
 @RequestMapping("/estabelecimentos")
@@ -27,10 +28,11 @@ public class EstabelecimentoController {
 
 	@Autowired
 	private EstabelecimentoService estabelecimentoService;
-	
+
 	@Autowired
 	private EnderecoService enderecoService;
 
+	@ApiOperation(value = "Lista os estabelecimentos paginados.", notes = "Lista todos os estabelecimentos de acordo com o número de linhas e página. Os elementos estão dispostos em ordem alfabética.")
 	@GetMapping
 	public ResponseEntity<Page<Estabelecimento>> listar(
 			@RequestParam(value = "pagina", defaultValue = "0") Integer pagina,
@@ -39,24 +41,28 @@ public class EstabelecimentoController {
 		return ResponseEntity.ok().body(estabelecimentos);
 	}
 
+	@ApiOperation(value = "Busca estebelecimento por ID.", notes = "Busca estabelecimento de acordo com o ID especificado.")
 	@GetMapping("/{id}")
 	public ResponseEntity<?> buscarPorId(@PathVariable Long id) {
 		return ResponseEntity.ok().body(estabelecimentoService.buscarEstabelecimentoPorId(id));
 	}
 
+	@ApiOperation(value = "Cadastra um novo estabelecimento.", notes = "Cadastra um novo estebelecimento com as informações especificadas.")
 	@PostMapping
 	public ResponseEntity<Estabelecimento> cadastrarEstabelecimento(
 			@RequestBody @Valid Estabelecimento estabelecimento) {
 		Estabelecimento estebelecimentoSalvo = estabelecimentoService.cadastrar(estabelecimento);
 		return ResponseEntity.status(HttpStatus.CREATED).body(estebelecimentoSalvo);
 	}
-	
+
+	@ApiOperation(value = "Cadastra um novo endereço ao estabelecimento ID.", notes = "Cadastra um novo endereço com as informações especificadas para um estabelecimento.")
 	@PostMapping("/{id}/enderecos")
 	@ResponseStatus(HttpStatus.CREATED)
 	public void adicionarEndereco(@PathVariable Long id, @RequestBody @Valid Endereco endereco) {
 		enderecoService.salvarEnderecoPorEstabelecimento(id, endereco);
 	}
-	
+
+	@ApiOperation(value = "Remove o endereço de um estabelecimento.", notes = "Busca estabelecimento de acordo com o ID especificado e remove o endereço também especificado.")
 	@DeleteMapping("/{id}/enderecos/{idEndereco}")
 	public void removerEndereco(@PathVariable Long id, @PathVariable Long idEndereco) {
 		enderecoService.removerEnderecoPorEstabelecimento(id, idEndereco);

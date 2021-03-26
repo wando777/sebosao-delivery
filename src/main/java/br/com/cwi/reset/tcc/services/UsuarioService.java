@@ -40,7 +40,7 @@ public class UsuarioService {
 	public Usuario buscarUsuarioPorId(Long id) {
 		Optional<Usuario> user = usuarioRepository.findById(id);
 		if (user.isEmpty()) {
-			throw new ObjetoNullException("O usuário não existe");
+			throw new ObjetoNullException("O usuario não existe");
 		}
 		return user.get();
 	}
@@ -57,13 +57,13 @@ public class UsuarioService {
 	private void validaUsuario(Usuario user) {
 		validaEmail(user.getEmail());
 		if (usuarioRepository.existsByCpf(user.getCpf())) {
-			throw new EntidadeJaCadastradaException("Esse CPF " + user.getCpf() + " já foi cadastrado.");
+			throw new EntidadeJaCadastradaException("Esse CPF " + user.getCpf() + " ja foi cadastrado.");
 		}
 	}
 
 	private void validaEmail(String email) {
 		if (usuarioRepository.existsByEmail(email)) {
-			throw new EntidadeJaCadastradaException("Esse e-mail " + email + " já foi cadastrado.");
+			throw new EntidadeJaCadastradaException("Esse e-mail " + email + " ja foi cadastrado.");
 		}
 	}
 

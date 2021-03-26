@@ -1,3 +1,30 @@
+---------------------------##### Regras de funcionamento #####---------------------------
+
+# Inicializando:
+O projeto está protegido com spring security, implementando o método JWT para autenticar requisições por meio de tokens assinados.
+
+Alguns caminhos estão liberados publicamente, sendo estes: 
+- Swagger;
+- H2;
+- Endpoints de usuários;
+- Endpoint GET de pedidos;
+
+# Primeiro passo para rodarmos a aplicação é criar um usuário. Este usuário terá uma senha que será criptografada, importante gravar esta senha, pois será com ela que iremos logar no sistema para solicitar as demais requisições.
+      -> De posse do e-mail cadastrado (userName) e a senha, podemos realizar login seguindo o caminho "{{baseUrl}}/login", segue exemplo de entrada (body) que deve ser passado:
+
+{
+    "userName": "UsuarioExemplo@dominio.com.br",
+    "senha": "12345"
+}
+
+Após logado, será gerado um token no Header (Key: Authorization) que servirá para acessar os demais endpoints. O token deve ser copiado (junto à expressão "Bearer") e adicionado nos demais Headers das requisiçÕes antes de serem solicitadas.
+
+Key: Authorization | Value: Bearer TOKEN_GERADO
+
+     -> Características do token: Ele possui expiration de 24 horas. Assim, caso necessário, é possível solicitar um novo token através do endpoint "{{baseUrl}}/auth/refresh_token" e seguir os mesmos passos acima.
+
+---------------------------##### Regras de negócio #####---------------------------
+
 # Projeto Final - CWI | Reset - 2ª Edição
 
 Como desafio para o projeto final do CWI | Reset, vamos criar a API de um aplicativo de delivery. O nome do aplicativo deverá ser definido por cada participante.

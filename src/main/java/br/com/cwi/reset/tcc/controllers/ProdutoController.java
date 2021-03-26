@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.cwi.reset.tcc.dominio.Produto;
 import br.com.cwi.reset.tcc.dominio.dto.ProdutoDTO;
 import br.com.cwi.reset.tcc.services.ProdutoService;
+import io.swagger.annotations.ApiOperation;
 
 @RestController
 @RequestMapping("/produtos")
@@ -27,6 +28,7 @@ public class ProdutoController {
 	@Autowired
 	private ProdutoService produtoService;
 
+	@ApiOperation(value = "Lista os produtos paginados.", notes = "Lista todos os produtos de acordo com o número de linhas e página. Os elementos estão dispostos em ordem alfabética.")
 	@GetMapping
 	public ResponseEntity<Page<Produto>> listar(@RequestParam(value = "pagina", defaultValue = "0") Integer pagina,
 			@RequestParam(value = "linhas", defaultValue = "10") Integer linhas) {
@@ -34,6 +36,7 @@ public class ProdutoController {
 		return ResponseEntity.ok().body(produtos);
 	}
 
+	@ApiOperation(value = "Cria um novo produto.", notes = "Cria um novo produto com as informações especificadas.")
 	@PostMapping
 	public ResponseEntity<Produto> salvarProduto(@RequestBody @Valid ProdutoDTO produtoDto,
 			HttpServletResponse response) {
@@ -41,6 +44,7 @@ public class ProdutoController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(produtoSalvo);
 	}
 	
+	@ApiOperation(value = "Remove um produto.", notes = "Remove um novo produto de acordo com o ID passado.")
 	@DeleteMapping("/{id}")
 	public void removerProduto(@PathVariable Long id) {
 		produtoService.removerProduto(id);
