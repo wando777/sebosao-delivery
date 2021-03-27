@@ -24,6 +24,7 @@ import br.com.cwi.reset.tcc.dominio.dto.ConsultarItemPedidoDTO;
 import br.com.cwi.reset.tcc.dominio.dto.ConsultarPedidoDTO;
 import br.com.cwi.reset.tcc.dominio.dto.ItemPedidoDTO;
 import br.com.cwi.reset.tcc.dominio.dto.PedidoDTO;
+import br.com.cwi.reset.tcc.dominio.dto.VisualizarEntregadorDTO;
 import br.com.cwi.reset.tcc.dominio.dto.VisualizarPedidoDTO;
 import br.com.cwi.reset.tcc.exceptions.FormaDePagamentoInvalidaException;
 import br.com.cwi.reset.tcc.exceptions.HorarioInvalidoException;
@@ -35,6 +36,7 @@ import br.com.cwi.reset.tcc.exceptions.UsuarioSemEnderecoException;
 import br.com.cwi.reset.tcc.repositories.EntregadorRepository;
 import br.com.cwi.reset.tcc.repositories.PedidoRepository;
 import br.com.cwi.reset.tcc.services.mappers.ConsultarItemPedidoMapper;
+import br.com.cwi.reset.tcc.services.mappers.EntregadorMapper;
 import br.com.cwi.reset.tcc.services.mappers.PedidoMapper;
 import br.com.cwi.reset.tcc.utils.DataUtils;
 
@@ -64,6 +66,8 @@ public class PedidoService {
 	@Autowired
 	private EntregadorService entregadorService;
 
+	private Integer tempoPreparo = 0;
+
 	public VisualizarPedidoDTO salvarProduto(@Valid PedidoDTO pedidoDto) {
 
 		Estabelecimento estabelecimento = estabelecimentoService
@@ -76,7 +80,7 @@ public class PedidoService {
 		List<Produto> produtos = new ArrayList<Produto>();
 		List<ItemPedido> itens = new ArrayList<ItemPedido>();
 		LocalDateTime horaDoPedido = LocalDateTime.now();
-		Integer tempoPreparo = 0;
+		// Integer tempoPreparo = 0;
 		BigDecimal valorTotal = new BigDecimal(0.0);
 
 		for (ItemPedidoDTO p : pedidoDto.getItens()) {
@@ -91,9 +95,9 @@ public class PedidoService {
 			itens.add(item);
 		}
 
-		LocalDateTime entrega = horaDoPedido.plusMinutes(tempoPreparo);
+		// LocalDateTime entrega = horaDoPedido.plusMinutes(tempoPreparo);
 
-		Pedido pedido = PedidoMapper.mapearPedido(endereco, estabelecimento, pedidoDto, horaDoPedido, entrega, usuario,
+		Pedido pedido = PedidoMapper.mapearPedido(endereco, estabelecimento, pedidoDto, horaDoPedido, usuario,
 				valorTotal, itens);
 		pedidoRepository.save(pedido);
 
@@ -127,26 +131,30 @@ public class PedidoService {
 
 	public ConsultarPedidoDTO buscarPedidoPorId(Long id) {
 		Pedido pedido = buscarPedido(id);
+		// Integer tempoPreparo = 0;
 		List<ConsultarItemPedidoDTO> itens = new ArrayList<ConsultarItemPedidoDTO>();
 		pedido.getItensPedido().forEach(item -> {
 			ConsultarItemPedidoDTO itenSalvo = ConsultarItemPedidoMapper.mapearConsultarItemPedido(item,
 					new ConsultarItemPedidoDTO());
+			tempoPreparo += item.getQuantidade() * item.getProduto().getTempoPreparo();
 			itens.add(itenSalvo);
 		});
+		LocalDateTime entrega = pedido.getStatus() == StatusPedido.ENTREGUE ? null
+				: pedido.getHorarioSolicitacao().plusMinutes(tempoPreparo);
 		ConsultarPedidoDTO consultar = PedidoMapper.mapearConsultaPedido(pedido.getSolicitante().getNome(),
 				pedido.getEnderecoEntrega(), pedido.getEstabelecimento().getNomeFantasia(), pedido.getValorTotal(),
-				pedido.getEntregador(), pedido.getHorarioEntrega(), pedido.getStatus(), itens);
+				pedido.getEntregador(), entrega, pedido.getStatus(), itens);
 		return consultar;
 	}
 
-	public Entregador entregarPedido(Long id) {
+	public VisualizarEntregadorDTO entregarPedido(Long id) {
 		Pedido pedido = buscarPedido(id);
 		validarSatusEmPreparo(pedido);
 		pedido = PedidoMapper.mapearEntregarPedido(pedido, entregadorService.getEntregadorDisponivel());
 		entregadorRepository.save(pedido.getEntregador());
 		pedidoRepository.save(pedido);
 
-		return pedido.getEntregador();
+		return EntregadorMapper.mapearVisualizarEntregador(pedido.getEntregador());
 	}
 
 	public void finalizarPedido(Long id) {
@@ -181,9 +189,8 @@ public class PedidoService {
 		}
 		estabelecimento.getHorariosFuncionamento().forEach(hr -> {
 			if (hr.getDiaSemana().equals(DataUtils.diaDaSemanaHoje())) {
-				// FIXME TIRAR O MINUSHOUR() QUE FIZ PARA FUNCIONAR DEPOIS DAS 23 HRS
-				if (DataUtils.horaAgora().minusHours(7l).isBefore(hr.getHorarioAbertura())
-						|| DataUtils.horaAgora().minusHours(7l).isAfter(hr.getHorarioFechamento())) {
+				if (DataUtils.horaAgora().isBefore(hr.getHorarioAbertura())
+						|| DataUtils.horaAgora().isAfter(hr.getHorarioFechamento())) {
 					throw new HorarioInvalidoException("O estabelecimento está fechado");
 				}
 			}

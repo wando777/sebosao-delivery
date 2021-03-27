@@ -30,7 +30,7 @@ public class PedidoMapper {
 	}
 
 	public static Pedido mapearPedido(Endereco endereco, Estabelecimento estabelecimento, PedidoDTO pedidoDto,
-			LocalDateTime horaDoPedido, LocalDateTime entrega, Usuario usuario, BigDecimal valorTotal,
+			LocalDateTime horaDoPedido, Usuario usuario, BigDecimal valorTotal,
 			List<ItemPedido> itensPedido) {
 		Pedido pedido = new Pedido();
 		pedido.setEnderecoEntrega(endereco);
@@ -38,7 +38,6 @@ public class PedidoMapper {
 		pedido.setFormaPagamento(pedidoDto.getFormaPagamento());
 		pedido.setStatus(StatusPedido.EM_PREPARO);
 		pedido.setHorarioSolicitacao(horaDoPedido);
-		pedido.setHorarioEntrega(entrega);
 		pedido.setSolicitante(usuario);
 		pedido.setValorTotal(valorTotal);
 		pedido.setItensPedido(itensPedido);

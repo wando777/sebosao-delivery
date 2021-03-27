@@ -63,20 +63,6 @@ public class Pedido {
     @JoinColumn(name = "id_entregador")
     private Entregador entregador;
     
-    /**
-	 * @param solicitante
-	 * @param enderecoEntrega
-	 * @param estabelecimento
-	 * @param itensPedido
-	 * @param formaPagamento
-	 * @param status
-	 * @param horarioSolicitacao
-	 * @param horarioSaiuParaEntrega
-	 * @param horarioEntrega
-	 * @param horarioCancelamento
-	 * @param valorTotal
-	 * @param entregador
-	 */
 	public Pedido(Usuario solicitante, Endereco enderecoEntrega, Estabelecimento estabelecimento,
 			List<ItemPedido> itensPedido, FormaPagamento formaPagamento, StatusPedido status,
 			LocalDateTime horarioSolicitacao, LocalDateTime horarioSaiuParaEntrega, LocalDateTime horarioEntrega,
