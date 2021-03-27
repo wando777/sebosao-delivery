@@ -10,15 +10,15 @@ Alguns caminhos estão liberados publicamente, sendo estes:
 - Endpoint GET de pedidos;
 
 Primeiro passo para rodarmos a aplicação é criar um usuário. Este usuário terá uma senha que será criptografada, importante gravar esta senha, pois será com ela que iremos logar no sistema para solicitar as demais requisições.
-De posse do e-mail cadastrado (userName) e a senha, podemos realizar login seguindo o caminho "{{baseUrl}}/login", segue exemplo de entrada (body) que deve ser passado:
+De posse do e-mail cadastrado (userName) e a senha, podemos realizar um POST do login seguindo o caminho `{{baseUrl}}/login`, segue exemplo de entrada (body) que deve ser passado:
 
--> {"userName": "UsuarioExemplo@dominio.com.br", "senha": "12345"}
+-> {"userName": "UsuarioExemplo@dominio.com.br", "senha": 12345}
 
-Após logado, será gerado um token no Header (Key: Authorization) que servirá para acessar os demais endpoints. O token deve ser copiado (junto à expressão "Bearer") e adicionado nos demais Headers das requisiçÕes antes de serem solicitadas.
+Após logado, será gerado um token no Header (Key: Authorization) que servirá para acessar os demais endpoints. O token deve ser copiado (junto à expressão "Bearer") e adicionado nos demais Headers das requisições antes de serem solicitadas.
 
 -> Key: Authorization | Value: Bearer TOKEN_GERADO
 
-Características do token: Ele possui expiration de 24 horas. Assim, caso necessário, é possível solicitar um novo token através do endpoint "{{baseUrl}}/auth/refresh_token" e seguir os mesmos passos acima.
+Características do token: Ele possui expiration de 24 horas. Assim, caso necessário, é possível solicitar um novo token através do endpoint `{{baseUrl}}/auth/refresh_token` e seguir os mesmos passos acima.
 
 ---------------------------##### Regras de negócio #####---------------------------
 
